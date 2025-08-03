@@ -323,8 +323,8 @@ export default function App() {
                 </AnimateOnScroll>
                 <AnimateOnScroll delay={150}>
                     <h3 className="text-2xl font-bold text-white mb-4">O envíanos un mensaje</h3>
-                    {/* El formulario ahora está preparado para Netlify */}
-                    <form name="contact" method="POST" data-netlify="true" className="space-y-6">
+                    {/* El formulario ahora redirige a la misma página para evitar el error 404 */}
+                    <form name="contact" method="POST" data-netlify="true" action="/#contact" className="space-y-6">
                         <input type="hidden" name="form-name" value="contact" />
                         <div>
                             <input type="text" name="name" placeholder="Tu Nombre" className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required />
@@ -372,3 +372,4 @@ export default function App() {
     </div>
   );
 }
+
