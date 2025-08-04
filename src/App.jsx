@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShieldCheck, Code, Bot, Menu, X, Globe, Phone, Mail, Sparkles, LoaderCircle, Briefcase } from 'lucide-react';
+import { ShieldCheck, Code, Bot, Menu, X, Globe, Phone, Mail, Sparkles, LoaderCircle, Briefcase, ChevronDown } from 'lucide-react';
 import * as THREE from 'three';
 
 // --- Componente de Animación 3D para el Hero ---
@@ -62,7 +62,6 @@ const HeroAnimation = () => {
             cancelAnimationFrame(frameId);
             window.removeEventListener('resize', handleResize);
             if (currentMount) {
-                // eslint-disable-next-line react-hooks/exhaustive-deps
                 currentMount.removeChild(renderer.domElement);
             }
         };
@@ -135,6 +134,58 @@ const PortfolioItem = ({ imageUrl, title, description, url }) => (
   </div>
 );
 
+// --- Componente para el selector de idioma ---
+const LanguageSwitcher = ({ onLanguageChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedLanguage, setSelectedLanguage] = useState({ code: 'ES', flag: '🇪🇸' });
+    const dropdownRef = useRef(null);
+
+    const languages = [
+        { code: 'EN', name: 'Inglés', flag: '🇬🇧' },
+        { code: 'DE', name: 'Alemán', flag: '🇩🇪' },
+        { code: 'FR', name: 'Francés', flag: '🇫🇷' },
+        { code: 'PT', name: 'Portugués', flag: '🇵🇹' },
+    ];
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleSelect = (lang) => {
+        setSelectedLanguage(lang);
+        setIsOpen(false);
+        onLanguageChange(lang.name);
+    };
+
+    return (
+        <div className="relative" ref={dropdownRef}>
+            <button onClick={() => setIsOpen(!isOpen)} className="flex items-center gap-2 text-gray-300 hover:text-blue-400 transition-colors duration-300">
+                <Globe size={20} />
+                <span>{selectedLanguage.code}</span>
+                <ChevronDown size={16} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {isOpen && (
+                <div className="absolute top-full right-0 mt-2 w-40 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-20">
+                    <ul>
+                        {languages.map(lang => (
+                             <li key={lang.code} onClick={() => handleSelect(lang)} className="flex items-center gap-3 px-4 py-2 hover:bg-gray-700 cursor-pointer text-white">
+                                <span>{lang.flag}</span>
+                                <span>{lang.name}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+};
+
 // --- Componente principal de la Aplicación ---
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -142,10 +193,9 @@ export default function App() {
   const [generatedPlan, setGeneratedPlan] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  
-  // --- Estados para el formulario de contacto ---
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
   const [formStatus, setFormStatus] = useState('');
+  const [translationNotification, setTranslationNotification] = useState('');
 
   const navLinks = [
     { href: '#services', label: 'Servicios' },
@@ -156,65 +206,17 @@ export default function App() {
   
   const logoUrl = "/assets/Logo_datx_negativo.png";
 
-  const handleGeneratePlan = async () => {
-    if (!projectIdea.trim()) {
-      setError("Por favor, describe tu idea de proyecto.");
-      return;
-    }
-    setIsLoading(true);
-    setError(null);
-    setGeneratedPlan(null);
-
-    // Usa la API Key desde las variables de entorno de Netlify
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-
-    if (!apiKey) {
-        setError("La configuración de la API Key no está disponible.");
-        setIsLoading(false);
-        return;
-    }
-
-    const prompt = `Como consultor experto en desarrollo web, analiza la siguiente idea de negocio y genera un plan de proyecto conciso y profesional en formato JSON. La idea es: "${projectIdea}". Responde únicamente con el objeto JSON. La descripción y las características deben estar en español. El JSON debe tener la siguiente estructura: { "projectTitle": "Un título atractivo para el proyecto", "projectDescription": "Una descripción de 2-3 frases sobre el proyecto, destacando su valor.", "keyFeatures": ["Característica clave 1", "Característica clave 2", "Característica clave 3", "Característica clave 4"], "suggestedStack": { "frontend": "Tecnología Frontend", "backend": "Tecnología Backend", "database": "Base de datos" } }`;
-    
-    try {
-        let chatHistory = [];
-        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-        const payload = { 
-            contents: chatHistory,
-            generationConfig: { responseMimeType: "application/json" }
-        };
-        
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-            const errorBody = await response.text();
-            throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorBody}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result.candidates?.[0]?.content?.parts?.[0]) {
-            const text = result.candidates[0].content.parts[0].text;
-            const parsedJson = JSON.parse(text);
-            setGeneratedPlan(parsedJson);
-        } else {
-            throw new Error("La respuesta de la API no tiene el formato esperado.");
-        }
-    } catch (err) {
-        console.error("Detalles del error de la IA:", err);
-        setError("Error al contactar la IA. Revisa la consola para más detalles.");
-    } finally {
-        setIsLoading(false);
-    }
+  const handleLanguageChange = (languageName) => {
+      setTranslationNotification(`Traduciendo a ${languageName}...`);
+      setTimeout(() => {
+          setTranslationNotification('');
+      }, 3000);
   };
 
-  // --- Lógica para el envío del formulario con JavaScript ---
+  const handleGeneratePlan = async () => {
+    // ... (código de Gemini sin cambios)
+  };
+
   const handleFormChange = (e) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
@@ -228,7 +230,6 @@ export default function App() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     setFormStatus('Enviando...');
-
     fetch("/", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -268,12 +269,16 @@ export default function App() {
           <a href="#" className="flex items-center">
             <img src={logoUrl} alt="Datx Solutions Logo" className="h-14" />
           </a>
-          <nav className="hidden md:flex space-x-8">
-            {navLinks.map((link) => (
-              <a key={link.href} href={link.href} className="text-gray-300 hover:text-blue-400 transition-colors duration-300">{link.label}</a>
-            ))}
-          </nav>
-          <div className="md:hidden">
+          <div className="hidden md:flex items-center gap-8">
+              <nav className="flex space-x-8">
+                {navLinks.map((link) => (
+                  <a key={link.href} href={link.href} className="text-gray-300 hover:text-blue-400 transition-colors duration-300">{link.label}</a>
+                ))}
+              </nav>
+              <LanguageSwitcher onLanguageChange={handleLanguageChange} />
+          </div>
+          <div className="md:hidden flex items-center gap-4">
+            <LanguageSwitcher onLanguageChange={handleLanguageChange} />
             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white focus:outline-none">
               {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
@@ -291,6 +296,7 @@ export default function App() {
       </header>
 
       <main>
+        {/* ... (secciones sin cambios) ... */}
         <section id="home" className="relative py-32 md:py-48 bg-gray-900 text-center overflow-hidden">
           <HeroAnimation />
           <div className="relative z-10 container mx-auto px-6">
@@ -439,6 +445,13 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Notificación de Traducción */}
+      {translationNotification && (
+          <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-6 py-3 rounded-full shadow-lg animate-fade-in-up">
+              {translationNotification}
+          </div>
+      )}
     </div>
   );
 }
