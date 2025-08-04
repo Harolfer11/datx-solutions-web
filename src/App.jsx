@@ -165,6 +165,15 @@ export default function App() {
     setError(null);
     setGeneratedPlan(null);
 
+    // Usa la API Key desde las variables de entorno de Netlify
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+    if (!apiKey) {
+        setError("La configuración de la API Key no está disponible.");
+        setIsLoading(false);
+        return;
+    }
+
     const prompt = `Como consultor experto en desarrollo web, analiza la siguiente idea de negocio y genera un plan de proyecto conciso y profesional en formato JSON. La idea es: "${projectIdea}". Responde únicamente con el objeto JSON. La descripción y las características deben estar en español. El JSON debe tener la siguiente estructura: { "projectTitle": "Un título atractivo para el proyecto", "projectDescription": "Una descripción de 2-3 frases sobre el proyecto, destacando su valor.", "keyFeatures": ["Característica clave 1", "Característica clave 2", "Característica clave 3", "Característica clave 4"], "suggestedStack": { "frontend": "Tecnología Frontend", "backend": "Tecnología Backend", "database": "Base de datos" } }`;
     
     try {
@@ -174,7 +183,7 @@ export default function App() {
             contents: chatHistory,
             generationConfig: { responseMimeType: "application/json" }
         };
-        const apiKey = "";
+        
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
@@ -184,7 +193,8 @@ export default function App() {
         });
 
         if (!response.ok) {
-            throw new Error(`Error de la API: ${response.status} ${response.statusText}. Esto es normal en un entorno local sin API Key.`);
+            const errorBody = await response.text();
+            throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorBody}`);
         }
         
         const result = await response.json();
@@ -424,6 +434,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
