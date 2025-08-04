@@ -183,7 +183,10 @@ export default function App() {
             body: JSON.stringify(payload)
         });
 
-        if (!response.ok) throw new Error(`Error de la API: ${response.statusText}`);
+        if (!response.ok) {
+            throw new Error(`Error de la API: ${response.status} ${response.statusText}. Esto es normal en un entorno local sin API Key.`);
+        }
+        
         const result = await response.json();
         
         if (result.candidates?.[0]?.content?.parts?.[0]) {
@@ -194,8 +197,8 @@ export default function App() {
             throw new Error("La respuesta de la API no tiene el formato esperado.");
         }
     } catch (err) {
-        console.error("Error al generar el plan:", err);
-        setError("No se pudo generar el plan. Por favor, inténtalo de nuevo más tarde.");
+        console.error("Detalles del error de la IA:", err);
+        setError("Error al contactar la IA. Revisa la consola para más detalles.");
     } finally {
         setIsLoading(false);
     }
@@ -421,6 +424,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
