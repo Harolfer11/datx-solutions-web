@@ -157,7 +157,48 @@ export default function App() {
   const logoUrl = "/assets/Logo_datx_negativo.png";
 
   const handleGeneratePlan = async () => {
-    // ... (código de Gemini sin cambios)
+    if (!projectIdea.trim()) {
+      setError("Por favor, describe tu idea de proyecto.");
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    setGeneratedPlan(null);
+
+    const prompt = `Como consultor experto en desarrollo web, analiza la siguiente idea de negocio y genera un plan de proyecto conciso y profesional en formato JSON. La idea es: "${projectIdea}". Responde únicamente con el objeto JSON. La descripción y las características deben estar en español. El JSON debe tener la siguiente estructura: { "projectTitle": "Un título atractivo para el proyecto", "projectDescription": "Una descripción de 2-3 frases sobre el proyecto, destacando su valor.", "keyFeatures": ["Característica clave 1", "Característica clave 2", "Característica clave 3", "Característica clave 4"], "suggestedStack": { "frontend": "Tecnología Frontend", "backend": "Tecnología Backend", "database": "Base de datos" } }`;
+    
+    try {
+        let chatHistory = [];
+        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+        const payload = { 
+            contents: chatHistory,
+            generationConfig: { responseMimeType: "application/json" }
+        };
+        const apiKey = "";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error(`Error de la API: ${response.statusText}`);
+        const result = await response.json();
+        
+        if (result.candidates?.[0]?.content?.parts?.[0]) {
+            const text = result.candidates[0].content.parts[0].text;
+            const parsedJson = JSON.parse(text);
+            setGeneratedPlan(parsedJson);
+        } else {
+            throw new Error("La respuesta de la API no tiene el formato esperado.");
+        }
+    } catch (err) {
+        console.error("Error al generar el plan:", err);
+        setError("No se pudo generar el plan. Por favor, inténtalo de nuevo más tarde.");
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   // --- Lógica para el envío del formulario con JavaScript ---
@@ -182,8 +223,8 @@ export default function App() {
     })
       .then(() => {
         setFormStatus("¡Mensaje enviado con éxito!");
-        setFormState({ name: '', email: '', message: '' }); // Limpia el formulario
-        setTimeout(() => setFormStatus(''), 5000); // Oculta el mensaje después de 5 segundos
+        setFormState({ name: '', email: '', message: '' });
+        setTimeout(() => setFormStatus(''), 5000);
       })
       .catch(error => {
         setFormStatus("Hubo un error al enviar el mensaje.");
@@ -237,7 +278,6 @@ export default function App() {
       </header>
 
       <main>
-        {/* ... (secciones sin cambios) ... */}
         <section id="home" className="relative py-32 md:py-48 bg-gray-900 text-center overflow-hidden">
           <HeroAnimation />
           <div className="relative z-10 container mx-auto px-6">
@@ -303,11 +343,21 @@ export default function App() {
             </AnimateOnScroll>
             <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-16 items-start">
                 <AnimateOnScroll className="bg-gray-800/50 p-8 rounded-2xl border border-blue-500/30">
-                    {/* ... (código del asistente de IA sin cambios) ... */}
+                    <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3"><Sparkles className="text-blue-400" />Asistente de Proyectos con IA</h3>
+                    <p className="text-gray-400 mb-6">Describe tu negocio o idea y obtén un plan inicial.</p>
+                    <div className="space-y-4">
+                        <textarea id="project-idea" rows="3" placeholder="Ej: Una tienda online de ropa vintage..." className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={projectIdea} onChange={(e) => setProjectIdea(e.target.value)} />
+                        <button onClick={handleGeneratePlan} disabled={isLoading} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105 disabled:bg-blue-800 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            {isLoading ? <><LoaderCircle className="animate-spin" />Generando...</> : <>✨ Generar Plan de Proyecto</>}
+                        </button>
+                        {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+                    </div>
+                    {generatedPlan && (
+                        <div className="mt-8 pt-6 border-t border-gray-700 animate-fade-in"><h4 className="text-xl font-bold text-white mb-4">{generatedPlan.projectTitle}</h4><p className="text-gray-400 mb-4">{generatedPlan.projectDescription}</p><h5 className="font-semibold text-white mb-2">Características Clave:</h5><ul className="list-disc list-inside text-gray-400 space-y-1 mb-4">{generatedPlan.keyFeatures.map((feature, i) => <li key={i}>{feature}</li>)}</ul><h5 className="font-semibold text-white mb-2">Stack Tecnológico Sugerido:</h5><div className="text-sm text-gray-500"><p><strong>Frontend:</strong> {generatedPlan.suggestedStack.frontend}</p><p><strong>Backend:</strong> {generatedPlan.suggestedStack.backend}</p><p><strong>Base de Datos:</strong> {generatedPlan.suggestedStack.database}</p></div></div>
+                    )}
                 </AnimateOnScroll>
                 <AnimateOnScroll delay={150}>
                     <h3 className="text-2xl font-bold text-white mb-4">O envíanos un mensaje</h3>
-                    {/* El formulario ahora es controlado por JavaScript */}
                     <form 
                         name="contact" 
                         method="POST" 
@@ -345,10 +395,32 @@ export default function App() {
       </main>
 
       <footer className="bg-black">
-        {/* ... (código del footer sin cambios) ... */}
+        <div className="container mx-auto px-6 py-10">
+          <div className="grid md:grid-cols-3 gap-8 text-center md:text-left items-center">
+            <div className="flex justify-center md:justify-start">
+              <img src={logoUrl} alt="Datx Solutions Logo" className="h-20" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white mb-4">Contacto Directo</h3>
+              <ul className="space-y-2">
+                <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400"><Mail size={18} /> <a href="mailto:contacto@datxsolutions.com">contacto@datxsolutions.com</a></li>
+                <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400"><Phone size={18} /> <a href="tel:+1234567890">+1 (234) 567-890</a></li>
+                <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400"><Globe size={18} /><span>Presencia Global</span></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white mb-4">Síguenos</h3>
+              <p className="text-gray-400">Próximamente en redes.</p>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500">
+            <p>&copy; {new Date().getFullYear()} Datx Solutions. Todos los derechos reservados.</p>
+          </div>
+        </div>
       </footer>
     </div>
   );
 }
+
 
 
