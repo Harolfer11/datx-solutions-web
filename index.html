@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/assets/Logo_datx_negativo.png" />
@@ -7,6 +7,18 @@
     <title>Datx Solutions | Soluciones Digitales</title>
   </head>
   <body>
+    <!-- 
+      Este formulario es un "cebo" para que el bot de Netlify lo detecte.
+      Es invisible para los usuarios gracias al atributo 'hidden'
+      y no interfiere con el formulario real que creamos en React.
+    -->
+    <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <textarea name="message"></textarea>
+    </form>
+    
+    <!-- Aquí es donde React construye tu sitio web -->
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
