@@ -261,18 +261,164 @@ const translations = {
   }
 };
 
-// --- Componente de Animación 3D (sin cambios) ---
-const HeroAnimation = () => { /* ... */ };
+// --- Componente de Animación 3D ---
+const HeroAnimation = () => {
+    const mountRef = useRef(null);
+    useEffect(() => {
+        const currentMount = mountRef.current;
+        if (!currentMount) return;
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
+        camera.position.z = 5;
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        currentMount.appendChild(renderer.domElement);
+        const geometry = new THREE.SphereGeometry(2, 32, 32);
+        const material = new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true });
+        const planet = new THREE.Mesh(geometry, material);
+        scene.add(planet);
+        const starVertices = [];
+        for (let i = 0; i < 10000; i++) {
+            const x = (Math.random() - 0.5) * 2000;
+            const y = (Math.random() - 0.5) * 2000;
+            const z = (Math.random() - 0.5) * 2000;
+            if (new THREE.Vector3(x, y, z).length() > 300) {
+                 starVertices.push(x, y, z);
+            }
+        }
+        const starGeometry = new THREE.BufferGeometry();
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        const starMaterial = new THREE.PointsMaterial({ color: 0x4b5563, size: 0.7 });
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+        const handleResize = () => {
+            if (currentMount) {
+                camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        let frameId = null;
+        const animate = () => {
+            frameId = requestAnimationFrame(animate);
+            planet.rotation.y += 0.001;
+            planet.rotation.x += 0.0005;
+            stars.rotation.y += 0.0001;
+            renderer.render(scene, camera);
+        };
+        animate();
+        return () => {
+            cancelAnimationFrame(frameId);
+            window.removeEventListener('resize', handleResize);
+            if (currentMount) {
+                currentMount.removeChild(renderer.domElement);
+            }
+        };
+    }, []);
+    return <div ref={mountRef} className="absolute top-0 left-0 w-full h-full z-0" />;
+};
 
-// --- Componente para animaciones al hacer scroll (sin cambios) ---
-const AnimateOnScroll = ({ children, className = '', delay = 0 }) => { /* ... */ };
+// --- Componente para animaciones al hacer scroll ---
+const AnimateOnScroll = ({ children, className = '', delay = 0 }) => {
+    const ref = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+    useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+                setIsVisible(true);
+                observer.unobserve(entry.target);
+            }
+        }, { threshold: 0.1 });
+        const currentRef = ref.current;
+        if (currentRef) observer.observe(currentRef);
+        return () => {
+            if (currentRef) observer.unobserve(currentRef);
+        };
+    }, []);
+    return (
+        <div ref={ref} className={`${className} transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{ transitionDelay: `${delay}ms` }}>
+            {children}
+        </div>
+    );
+};
 
-// --- Componentes de la UI (sin cambios) ---
-const ServiceCard = ({ icon, title, children }) => { /* ... */ };
-const PortfolioItem = ({ imageUrl, title, description, url }) => { /* ... */ };
+// --- Componentes de la UI ---
+const ServiceCard = ({ icon, title, children }) => (
+  <div className="bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-blue-500/30 hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 h-full flex flex-col">
+    <div className="mb-6 text-blue-400">{icon}</div>
+    <h3 className="text-2xl font-bold text-white mb-4">{title}</h3>
+    <p className="text-gray-400 leading-relaxed flex-grow">{children}</p>
+  </div>
+);
+const PortfolioItem = ({ imageUrl, title, description, url }) => (
+  <div className="bg-gray-800 rounded-2xl overflow-hidden group">
+    <div className="overflow-hidden">
+        <img src={imageUrl} alt={title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/600x400/020617/38bdf8?text=Proyecto'; }} />
+    </div>
+    <div className="p-6">
+      <h4 className="text-xl font-bold text-white mb-2">{title}</h4>
+      <p className="text-gray-400 mb-4 text-sm">{description}</p>
+      <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors duration-300 font-semibold">
+        Ver Proyecto &rarr;
+      </a>
+    </div>
+  </div>
+);
 
-// --- Componente para el selector de idioma (sin cambios) ---
-const LanguageSwitcher = ({ onLanguageChange, currentLang }) => { /* ... */ };
+// --- Componente para el selector de idioma ---
+const LanguageSwitcher = ({ onLanguageChange, currentLang }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    const languages = [
+        { code: 'es', name: 'Español', flag: '🇪🇸' },
+        { code: 'en', name: 'English', flag: '🇬🇧' },
+        { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+        { code: 'fr', name: 'Français', flag: '🇫🇷' },
+        { code: 'pt', name: 'Português', flag: '🇵🇹' },
+    ];
+    
+    const selectedLanguage = languages.find(l => l.code === currentLang);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleSelect = (langCode) => {
+        onLanguageChange(langCode);
+        setIsOpen(false);
+    };
+
+    return (
+        <div className="relative" ref={dropdownRef}>
+            <button onClick={() => setIsOpen(!isOpen)} className="flex items-center gap-2 text-gray-300 hover:text-blue-400 transition-colors duration-300">
+                <Globe size={20} />
+                <span>{selectedLanguage.code.toUpperCase()}</span>
+                <ChevronDown size={16} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {isOpen && (
+                <div className="absolute top-full right-0 mt-2 w-40 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-20">
+                    <ul>
+                        {languages.map(lang => (
+                             <li key={lang.code} onClick={() => handleSelect(lang.code)} className="flex items-center gap-3 px-4 py-2 hover:bg-gray-700 cursor-pointer text-white">
+                                <span>{lang.flag}</span>
+                                <span>{lang.name}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+};
 
 // --- Componente para el Chat de FAQ con IA ---
 const FaqChat = ({ content, apiKey }) => {
@@ -421,15 +567,100 @@ export default function App() {
     { href: '#contact', label: content.navContact },
   ];
 
-  const handleGeneratePlan = async () => { /* ... (código sin cambios) ... */ };
+  const handleGeneratePlan = async () => {
+    if (!projectIdea.trim()) {
+      setError("Por favor, describe tu idea de proyecto.");
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    setGeneratedPlan(null);
+
+    // Usa la API Key desde las variables de entorno de Netlify
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+    if (!apiKey) {
+        setError("La configuración de la API Key no está disponible.");
+        setIsLoading(false);
+        return;
+    }
+
+    const prompt = `Como consultor experto en desarrollo web, analiza la siguiente idea de negocio y genera un plan de proyecto conciso y profesional en formato JSON. La idea es: "${projectIdea}". Responde únicamente con el objeto JSON. La descripción y las características deben estar en español. El JSON debe tener la siguiente estructura: { "projectTitle": "Un título atractivo para el proyecto", "projectDescription": "Una descripción de 2-3 frases sobre el proyecto, destacando su valor.", "keyFeatures": ["Característica clave 1", "Característica clave 2", "Característica clave 3", "Característica clave 4"], "suggestedStack": { "frontend": "Tecnología Frontend", "backend": "Tecnología Backend", "database": "Base de datos" } }`;
+    
+    try {
+        let chatHistory = [];
+        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+        const payload = { 
+            contents: chatHistory,
+            generationConfig: { responseMimeType: "application/json" }
+        };
+        
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errorBody = await response.text();
+            throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorBody}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.candidates?.[0]?.content?.parts?.[0]) {
+            const text = result.candidates[0].content.parts[0].text;
+            const parsedJson = JSON.parse(text);
+            setGeneratedPlan(parsedJson);
+        } else {
+            throw new Error("La respuesta de la API no tiene el formato esperado.");
+        }
+    } catch (err) {
+        console.error("Detalles del error de la IA:", err);
+        setError("Error al contactar la IA. Revisa la consola para más detalles.");
+    } finally {
+        setIsLoading(false);
+    }
+  };
   const handleFormChange = (e) => { setFormState({ ...formState, [e.target.name]: e.target.value }); };
   const encode = (data) => { return Object.keys(data).map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key])).join("&"); };
-  const handleFormSubmit = (e) => { /* ... (código sin cambios) ... */ };
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setFormStatus('Enviando...');
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: encode({ "form-name": "contact", ...formState })
+    })
+      .then(() => {
+        setFormStatus("¡Mensaje enviado con éxito!");
+        setFormState({ name: '', email: '', message: '' });
+        setTimeout(() => setFormStatus(''), 5000);
+      })
+      .catch(error => {
+        setFormStatus("Hubo un error al enviar el mensaje.");
+        console.error(error);
+      });
+  };
 
   return (
     <div className="bg-gray-900 text-gray-200 font-sans leading-normal tracking-tight">
       <style>{`
-        /* ... (estilos sin cambios) ... */
+        .animated-gradient-text {
+          background: linear-gradient(90deg, #38bdf8, #a78bfa, #38bdf8);
+          background-size: 200% auto;
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: gradient-flow 5s ease-in-out infinite;
+        }
+        @keyframes gradient-flow {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
       `}</style>
 
       <header className="bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50">
@@ -464,16 +695,130 @@ export default function App() {
       </header>
 
       <main>
-        {/* ... (secciones sin cambios) ... */}
+        <section id="home" className="relative py-32 md:py-48 bg-gray-900 text-center overflow-hidden">
+          <HeroAnimation />
+          <div className="relative z-10 container mx-auto px-6">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4">
+              {content.heroTitle} <span className="animated-gradient-text">{content.heroTitleHighlight}</span>
+            </h1>
+            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+              {content.heroSubtitle}
+            </p>
+            <a href="#contact" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105">
+              {content.heroButton}
+            </a>
+          </div>
+        </section>
+
+        <section id="services" className="py-20 bg-black">
+          <div className="container mx-auto px-6">
+            <AnimateOnScroll className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-white">{content.servicesTitle}</h2>
+              <p className="text-gray-400 mt-2">{content.servicesSubtitle}</p>
+            </AnimateOnScroll>
+            <div className="grid md:grid-cols-3 gap-10">
+              <AnimateOnScroll delay={0}><ServiceCard icon={<Code size={48} />} title={content.service1Title}>{content.service1Desc}</ServiceCard></AnimateOnScroll>
+              <AnimateOnScroll delay={150}><ServiceCard icon={<ShieldCheck size={48} />} title={content.service2Title}>{content.service2Desc}</ServiceCard></AnimateOnScroll>
+              <AnimateOnScroll delay={300}><ServiceCard icon={<Bot size={48} />} title={content.service3Title}>{content.service3Desc}</ServiceCard></AnimateOnScroll>
+            </div>
+          </div>
+        </section>
+
+        <section id="portfolio" className="py-20 bg-gray-900">
+          <div className="container mx-auto px-6">
+            <AnimateOnScroll className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-white">{content.portfolioTitle}</h2>
+              <p className="text-gray-400 mt-2">{content.portfolioSubtitle}</p>
+            </AnimateOnScroll>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+               <AnimateOnScroll delay={0}><PortfolioItem imageUrl="https://placehold.co/600x400/1e293b/38bdf8?text=E-commerce+Tech" title={content.portfolioItem1Title} description={content.portfolioItem1Desc} url="#" /></AnimateOnScroll>
+               <AnimateOnScroll delay={150}><PortfolioItem imageUrl="https://placehold.co/600x400/1e293b/38bdf8?text=Web+Corporativa" title={content.portfolioItem2Title} description={content.portfolioItem2Desc} url="#" /></AnimateOnScroll>
+               <AnimateOnScroll delay={300}><PortfolioItem imageUrl="https://placehold.co/600x400/1e293b/38bdf8?text=Landing+Page+App" title={content.portfolioItem3Title} description={content.portfolioItem3Desc} url="#" /></AnimateOnScroll>
+            </div>
+          </div>
+        </section>
+
+        <section id="about" className="py-20 bg-black">
+          <div className="container mx-auto px-6">
+            <div className="flex flex-col md:flex-row items-center gap-12">
+              <AnimateOnScroll className="md:w-1/2"><img src="https://placehold.co/800x600/020617/ffffff?text=Equipo" alt="Nuestro equipo" className="rounded-2xl shadow-lg" /></AnimateOnScroll>
+              <AnimateOnScroll className="md:w-1/2" delay={150}>
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">{content.aboutTitle}</h2>
+                <p className="text-gray-400 mb-4 leading-relaxed">{content.aboutDesc1}</p>
+                <p className="text-gray-400 leading-relaxed">{content.aboutDesc2}</p>
+              </AnimateOnScroll>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" className="py-20 bg-gray-900">
+          <div className="container mx-auto px-6">
+            <AnimateOnScroll className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-white">{content.contactTitle}</h2>
+              <p className="text-gray-400 mt-2">{content.contactSubtitle}</p>
+            </AnimateOnScroll>
+            <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-16 items-start">
+                <AnimateOnScroll className="bg-gray-800/50 p-8 rounded-2xl border border-blue-500/30">
+                    <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3"><Sparkles className="text-blue-400" />{content.aiAssistantTitle}</h3>
+                    <p className="text-gray-400 mb-6">{content.aiAssistantDesc}</p>
+                    <div className="space-y-4">
+                        <textarea id="project-idea" rows="3" placeholder={content.aiAssistantPlaceholder} className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={projectIdea} onChange={(e) => setProjectIdea(e.target.value)} />
+                        <button onClick={handleGeneratePlan} disabled={isLoading} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105 disabled:bg-blue-800 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            {isLoading ? <><LoaderCircle className="animate-spin" />{content.aiAssistantGenerating}</> : <>✨ {content.aiAssistantButton}</>}
+                        </button>
+                        {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+                    </div>
+                    {generatedPlan && (
+                        <div className="mt-8 pt-6 border-t border-gray-700 animate-fade-in"><h4 className="text-xl font-bold text-white mb-4">{generatedPlan.projectTitle}</h4><p className="text-gray-400 mb-4">{generatedPlan.projectDescription}</p><h5 className="font-semibold text-white mb-2">Características Clave:</h5><ul className="list-disc list-inside text-gray-400 space-y-1 mb-4">{generatedPlan.keyFeatures.map((feature, i) => <li key={i}>{feature}</li>)}</ul><h5 className="font-semibold text-white mb-2">Stack Tecnológico Sugerido:</h5><div className="text-sm text-gray-500"><p><strong>Frontend:</strong> {generatedPlan.suggestedStack.frontend}</p><p><strong>Backend:</strong> {generatedPlan.suggestedStack.backend}</p><p><strong>Base de Datos:</strong> {generatedPlan.suggestedStack.database}</p></div></div>
+                    )}
+                </AnimateOnScroll>
+                <AnimateOnScroll delay={150}>
+                    <h3 className="text-2xl font-bold text-white mb-4">{content.formTitle}</h3>
+                    <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={handleFormSubmit} className="space-y-6">
+                        <input type="hidden" name="form-name" value="contact" />
+                        <p className="hidden"><label>No llenes esto si eres humano: <input name="bot-field" onChange={handleFormChange} /></label></p>
+                        <div><input type="text" name="name" placeholder={content.formNamePlaceholder} value={formState.name} onChange={handleFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required /></div>
+                        <div><input type="email" name="email" placeholder={content.formEmailPlaceholder} value={formState.email} onChange={handleFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required /></div>
+                        <div><textarea name="message" rows="5" placeholder={content.formMessagePlaceholder} value={formState.message} onChange={handleFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea></div>
+                        <div className="text-center"><button type="submit" className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-10 rounded-full text-lg transition-all transform hover:scale-105">{formStatus === 'Enviando...' ? content.formSending : content.formButton}</button></div>
+                        {formStatus && formStatus !== 'Enviando...' && (<p className="text-center text-white mt-4">{formStatus}</p>)}
+                    </form>
+                </AnimateOnScroll>
+            </div>
+          </div>
+        </section>
       </main>
 
       <footer className="bg-black">
-        {/* ... (código del footer sin cambios) ... */}
+        <div className="container mx-auto px-6 py-10">
+          <div className="grid md:grid-cols-3 gap-8 text-center md:text-left items-center">
+            <div className="flex justify-center md:justify-start">
+              <img src={logoUrl} alt="Datx Solutions Logo" className="h-20" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white mb-4">{content.footerContactTitle}</h3>
+              <ul className="space-y-2">
+                <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400"><Mail size={18} /> <a href="mailto:contacto@datxsolutions.com">contacto@datxsolutions.com</a></li>
+                <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400"><Phone size={18} /> <a href="https://wa.me/573103032487" target="_blank" rel="noopener noreferrer">+57 310 303 2487 (WhatsApp)</a></li>
+                <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400"><Globe size={18} /><span>{content.footerContactGlobal}</span></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white mb-4">{content.footerFollowTitle}</h3>
+              <ul className="space-y-2">
+                <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400 transition-colors"><Briefcase size={18} /><a href="https://es.fiverr.com/s/xXL3DpB" target="_blank" rel="noopener noreferrer">{content.footerFiverrLink}</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500">
+            <p>&copy; {new Date().getFullYear()} Datx Solutions. {content.footerRights}</p>
+          </div>
+        </div>
       </footer>
       
       <FaqChat content={content} apiKey={geminiApiKey} />
     </div>
-  );
+  )
 }
 
 
