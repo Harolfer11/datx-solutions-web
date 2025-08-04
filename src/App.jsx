@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShieldCheck, Code, Bot, Menu, X, Globe, Phone, Mail, Sparkles, LoaderCircle } from 'lucide-react';
+import { ShieldCheck, Code, Bot, Menu, X, Globe, Phone, Mail, Sparkles, LoaderCircle, Briefcase } from 'lucide-react';
 import * as THREE from 'three';
 
 // --- Componente de Animación 3D para el Hero ---
@@ -423,7 +423,12 @@ export default function App() {
             </div>
             <div>
               <h3 className="text-xl font-bold text-white mb-4">Síguenos</h3>
-              <p className="text-gray-400">Próximamente en redes.</p>
+              <ul className="space-y-2">
+                <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400 transition-colors">
+                    <Briefcase size={18} />
+                    <a href="https://es.fiverr.com/s/xXL3DpB" target="_blank" rel="noopener noreferrer">Contrátame en Fiverr</a>
+                </li>
+              </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500">
@@ -434,6 +439,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
