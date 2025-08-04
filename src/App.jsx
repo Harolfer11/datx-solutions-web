@@ -417,7 +417,10 @@ export default function App() {
               <h3 className="text-xl font-bold text-white mb-4">Contacto Directo</h3>
               <ul className="space-y-2">
                 <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400"><Mail size={18} /> <a href="mailto:contacto@datxsolutions.com">contacto@datxsolutions.com</a></li>
-                <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400"><Phone size={18} /> <a href="tel:+1234567890">+1 (234) 567-890</a></li>
+                <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400">
+                    <Phone size={18} /> 
+                    <a href="https://wa.me/573103032487" target="_blank" rel="noopener noreferrer">+57 310 303 2487 (WhatsApp)</a>
+                </li>
                 <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400"><Globe size={18} /><span>Presencia Global</span></li>
               </ul>
             </div>
