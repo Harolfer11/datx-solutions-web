@@ -340,7 +340,7 @@ export default function App() {
               <AnimateOnScroll className="md:w-1/2"><img src="https://placehold.co/800x600/020617/ffffff?text=Equipo" alt="Nuestro equipo" className="rounded-2xl shadow-lg" /></AnimateOnScroll>
               <AnimateOnScroll className="md:w-1/2" delay={150}>
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Tu Socio Estratégico en el Mundo Digital</h2>
-                <p className="text-gray-400 mb-4 leading-relaxed">En Datx Solutions, somos un equipo de apasionados por la tecnología. Con más de 20 años de experiencia, nuestra misión es ofrecer soluciones digitales que superen las expectativas.</p>
+                <p className="text-gray-400 mb-4 leading-relaxed">En Datx Solutions, somos un equipo de apasionados por la tecnología. Con más de 2 años de experiencia, nuestra misión es ofrecer soluciones digitales que superen las expectativas.</p>
                 <p className="text-gray-400 leading-relaxed">Trabajamos con clientes de todo el mundo, entendiendo cada mercado para ofrecer un servicio global con un toque local. La transparencia y la excelencia son nuestros pilares.</p>
               </AnimateOnScroll>
             </div>
