@@ -179,7 +179,7 @@ const HeroAnimation = () => {
 
 const AnimateOnScroll = memo(({ children, className = '', delay = 0 }) => {
     const ref = useRef(null);
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] useState(false);
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => {
             if (entry.isIntersecting) {
@@ -430,6 +430,7 @@ export default function App() {
   const [language, setLanguage] = useState('es');
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [showCookieBanner, setShowCookieBanner] = useState(false);
+  const [formState, setFormState] = useState({ name: '', email: '', message: '' });
 
   useEffect(() => {
       const consent = localStorage.getItem('cookie_consent');
@@ -457,7 +458,6 @@ export default function App() {
     { href: '#contact', label: content.navContact },
   ];
 
-  const [formState, setFormState] = useState({ name: '', email: '', message: '' });
   const handleQuoteRequest = (summary) => {
       setFormState(prev => ({ ...prev, message: summary }));
       const contactSection = document.getElementById('contact');
@@ -644,6 +644,33 @@ const Contact = memo(({ content, geminiApiKey, formState, setFormState, onPrivac
     );
 });
 
+const Footer = memo(({ logoUrl, content, onPrivacyClick }) => (
+    <footer className="bg-black">
+        <div className="container mx-auto px-6 py-10">
+            <div className="grid md:grid-cols-3 gap-8 text-center md:text-left items-center">
+                <div className="flex justify-center md:justify-start"><img src={logoUrl} alt="Datx Solutions Logo" className="h-20" /></div>
+                <div>
+                    <h3 className="text-xl font-bold text-white mb-4">{content.footerContactTitle}</h3>
+                    <ul className="space-y-2">
+                        <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400"><Mail size={18} /> <a href="mailto:contacto@datxsolutions.com">contacto@datxsolutions.com</a></li>
+                        <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400"><Phone size={18} /> <a href="https://wa.me/573103032487" target="_blank" rel="noopener noreferrer">+57 310 303 2487 (WhatsApp)</a></li>
+                        <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400"><Globe size={18} /><span>{content.footerContactGlobal}</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 className="text-xl font-bold text-white mb-4">{content.footerFollowTitle}</h3>
+                    <ul className="space-y-2">
+                        <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400 transition-colors"><Briefcase size={18} /><a href="https://es.fiverr.com/s/xXL3DpB" target="_blank" rel="noopener noreferrer">{content.footerFiverrLink}</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div className="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-4">
+                <p>&copy; {new Date().getFullYear()} Datx Solutions. {content.footerRights}</p>
+                <button onClick={onPrivacyClick} className="hover:text-blue-400 transition-colors">{content.footerPrivacy}</button>
+            </div>
+        </div>
+    </footer>
+));
 
 
 
