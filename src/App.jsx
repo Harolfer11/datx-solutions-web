@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, Suspense, memo } from 'react';
-import { ShieldCheck, Code, Bot, Menu, X, Globe, Phone, Mail, Sparkles, LoaderCircle, Briefcase, ChevronDown, MessageSquare, SendHorizontal, Building, FileText, ShoppingCart, FilePlus, PenTool, BotMessageSquare, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Code, Bot, Menu, X, Globe, Phone, Mail, Sparkles, LoaderCircle, Briefcase, ChevronDown, MessageSquare, SendHorizontal, Building, FileText, ShoppingCart, FilePlus, PenTool, BotMessageSquare, ArrowRight, Star } from 'lucide-react';
 import * as THREE from 'three';
 
 // --- Central de Traducciones ---
@@ -7,6 +7,7 @@ const translations = {
   es: {
     navServices: 'Servicios',
     navPortfolio: 'Portafolio',
+    navTestimonials: 'Testimonios', // Nuevo
     navBlog: 'Blog',
     navCalculator: 'Calculadora',
     navAbout: 'Nosotros',
@@ -31,6 +32,17 @@ const translations = {
     portfolioItem2Desc: 'Sitio web profesional para una firma de consultoría financiera internacional.',
     portfolioItem3Title: 'Landing Page para App Móvil',
     portfolioItem3Desc: 'Página de captura de leads para el lanzamiento de una nueva aplicación.',
+    testimonialsTitle: 'Lo que dicen nuestros clientes', // Nuevo
+    testimonialsSubtitle: 'La satisfacción y el éxito de nuestros socios son nuestra mayor prioridad.', // Nuevo
+    testimonial1Name: 'Ana García', // Nuevo
+    testimonial1Company: 'CEO de TechSolutions', // Nuevo
+    testimonial1Quote: '"El equipo de Datx superó todas nuestras expectativas. El sitio web que desarrollaron no solo es visualmente impresionante, sino también increíblemente rápido y funcional. ¡Nuestro tráfico orgánico ha aumentado un 50%!"', // Nuevo
+    testimonial2Name: 'Carlos Rodríguez', // Nuevo
+    testimonial2Company: 'Gerente de Marketing en Innovate Co.', // Nuevo
+    testimonial2Quote: '"El soporte técnico es de primer nivel. Siempre están disponibles para resolver cualquier problema, por complejo que sea. Nos han ahorrado incontables horas de inactividad. Totalmente recomendados."', // Nuevo
+    testimonial3Name: 'Laura Fernández', // Nuevo
+    testimonial3Company: 'Emprendedora', // Nuevo
+    testimonial3Quote: '"La asistencia virtual ha transformado mi productividad. Delegar las tareas administrativas me ha permitido centrarme en hacer crecer mi negocio. Son organizados, eficientes y muy proactivos."', // Nuevo
     blogTitle: 'Nuestro Blog',
     blogSubtitle: 'Artículos, tutoriales y consejos del mundo de la tecnología y el desarrollo web.',
     blogArticle1Title: '5 Razones por las que tu Negocio Necesita un Sitio Web Rápido',
@@ -105,6 +117,7 @@ const translations = {
   en: {
     navServices: 'Services',
     navPortfolio: 'Portfolio',
+    navTestimonials: 'Testimonials', // New
     navBlog: 'Blog',
     navCalculator: 'Calculator',
     navAbout: 'About Us',
@@ -129,6 +142,17 @@ const translations = {
     portfolioItem2Desc: 'Professional website for an international financial consulting firm.',
     portfolioItem3Title: 'Landing Page for Mobile App',
     portfolioItem3Desc: 'Lead capture page for the launch of a new application.',
+    testimonialsTitle: 'What Our Clients Say', // New
+    testimonialsSubtitle: 'The satisfaction and success of our partners are our top priority.', // New
+    testimonial1Name: 'Ana Garcia', // New
+    testimonial1Company: 'CEO of TechSolutions', // New
+    testimonial1Quote: '"The Datx team exceeded all our expectations. The website they developed is not only visually stunning but also incredibly fast and functional. Our organic traffic has increased by 50%!"', // New
+    testimonial2Name: 'Carlos Rodriguez', // New
+    testimonial2Company: 'Marketing Manager at Innovate Co.', // New
+    testimonial2Quote: '"The technical support is top-notch. They are always available to solve any issue, no matter how complex. They have saved us countless hours of downtime. Highly recommended."', // New
+    testimonial3Name: 'Laura Fernandez', // New
+    testimonial3Company: 'Entrepreneur', // New
+    testimonial3Quote: '"The virtual assistance has transformed my productivity. Delegating administrative tasks has allowed me to focus on growing my business. They are organized, efficient, and very proactive."', // New
     blogTitle: 'Our Blog',
     blogSubtitle: 'Articles, tutorials, and tips from the world of technology and web development.',
     blogArticle1Title: '5 Reasons Why Your Business Needs a Fast Website',
@@ -191,14 +215,13 @@ const translations = {
     privacySecurityTitle: '3. Data Security',
     privacySecurityDesc: 'We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used, or accessed in an unauthorized way.',
     privacyCookiesTitle: '4. Use of Cookies',
-    privacyCookiesDesc: 'Our website uses essential cookies to ensure its proper functioning and improve your browsing experience. Cookies are small text files stored on your device. By continuing to use our site, you agree to the use of these cookies.',
+    privacyCookiesDesc: 'Our website uses essential cookies to ensure its proper functioning and improve your Browse experience. Cookies are small text files stored on your device. By continuing to use our site, you agree to the use of these cookies.',
     privacyRightsTitle: '5. Your Rights',
     privacyRightsDesc: 'You have the right to request access to, correction of, or deletion of your personal data that we have collected. To exercise these rights, please contact us via our email address.',
     privacyContactTitle: '6. Contact Us',
     privacyContactDesc: 'If you have any questions about this privacy policy, you can contact us at contacto@datxsolutions.com.',
     privacyClose: 'Close',
   },
-  // Otras traducciones (de, fr, pt) se omiten por brevedad
 };
 
 // --- COMPONENTES MODULARES ---
@@ -305,6 +328,30 @@ const PortfolioItem = memo(({ imageUrl, title, description, url }) => (
       </a>
     </div>
   </div>
+));
+
+// --- NUEVO COMPONENTE TestimonialCard ---
+const TestimonialCard = memo(({ imageUrl, name, company, quote }) => (
+    <div className="bg-gray-800 p-8 rounded-2xl shadow-lg flex flex-col h-full">
+        <div className="flex items-center mb-4">
+            <img 
+                src={imageUrl} 
+                alt={`Foto de ${name}`} 
+                className="w-16 h-16 rounded-full object-cover mr-4 border-2 border-blue-400"
+                onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/100x100/020617/ffffff?text=User'; }}
+            />
+            <div>
+                <h4 className="text-lg font-bold text-white">{name}</h4>
+                <p className="text-sm text-blue-300">{company}</p>
+            </div>
+        </div>
+        <div className="flex-grow">
+            <p className="text-gray-400 italic">"{quote}"</p>
+        </div>
+        <div className="flex text-yellow-400 mt-4">
+            {[...Array(5)].map((_, i) => <Star key={i} size={20} fill="currentColor" />)}
+        </div>
+    </div>
 ));
 
 const LanguageSwitcher = memo(({ onLanguageChange, currentLang }) => {
@@ -564,6 +611,44 @@ const Portfolio = memo(({ content }) => (
     </section>
 ));
 
+// --- NUEVA SECCIÓN Testimonials ---
+const Testimonials = memo(({ content }) => (
+    <section id="testimonials" className="py-20 bg-black">
+        <div className="container mx-auto px-6">
+            <AnimateOnScroll className="text-center mb-16">
+                <h2 className="text-3xl md:text-4xl font-bold text-white">{content.testimonialsTitle}</h2>
+                <p className="text-gray-400 mt-2">{content.testimonialsSubtitle}</p>
+            </AnimateOnScroll>
+            <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-10">
+                <AnimateOnScroll delay={0}>
+                    <TestimonialCard 
+                        imageUrl="https://placehold.co/100x100/38bdf8/ffffff?text=AG"
+                        name={content.testimonial1Name}
+                        company={content.testimonial1Company}
+                        quote={content.testimonial1Quote}
+                    />
+                </AnimateOnScroll>
+                <AnimateOnScroll delay={150}>
+                    <TestimonialCard 
+                        imageUrl="https://placehold.co/100x100/38bdf8/ffffff?text=CR"
+                        name={content.testimonial2Name}
+                        company={content.testimonial2Company}
+                        quote={content.testimonial2Quote}
+                    />
+                </AnimateOnScroll>
+                <AnimateOnScroll delay={300}>
+                    <TestimonialCard 
+                        imageUrl="https://placehold.co/100x100/38bdf8/ffffff?text=LF"
+                        name={content.testimonial3Name}
+                        company={content.testimonial3Company}
+                        quote={content.testimonial3Quote}
+                    />
+                </AnimateOnScroll>
+            </div>
+        </div>
+    </section>
+));
+
 const Blog = memo(({ content }) => (
     <section id="blog" className="py-20 bg-gray-900">
         <div className="container mx-auto px-6">
@@ -792,9 +877,11 @@ export default function App() {
   const logoUrl = "/assets/Logo_datx_negativo.png";
   const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
+  // --- NAVEGACIÓN ACTUALIZADA ---
   const navLinks = [
     { href: '#services', label: content.navServices },
     { href: '#portfolio', label: content.navPortfolio },
+    { href: '#testimonials', label: content.navTestimonials },
     { href: '#blog', label: content.navBlog },
     { href: '#calculator', label: content.navCalculator },
     { href: '#about', label: content.navAbout },
@@ -893,6 +980,8 @@ export default function App() {
         <Hero content={content} />
         <Services content={content} />
         <Portfolio content={content} />
+        {/* --- SECCIÓN INTEGRADA --- */}
+        <Testimonials content={content} />
         <Blog content={content} />
         <ProjectCalculator content={content} onQuoteRequest={handleQuoteRequest} />
         <About content={content} />
