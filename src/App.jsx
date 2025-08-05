@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, Suspense, memo } from 'react';
-import { ShieldCheck, Code, Bot, Menu, X, Globe, Phone, Mail, Sparkles, LoaderCircle, Briefcase, ChevronDown, MessageSquare, SendHorizontal, Building, FileText, ShoppingCart, FilePlus, PenTool, BotMessageSquare, ArrowRight, Star } from 'lucide-react';
+import { ShieldCheck, Code, Bot, Menu, X, Globe, Phone, Mail, Sparkles, LoaderCircle, Briefcase, ChevronDown, MessageSquare, SendHorizontal, Building, FileText, ShoppingCart, FilePlus, PenTool, BotMessageSquare, ArrowRight } from 'lucide-react';
 import * as THREE from 'three';
 
 // --- Central de Traducciones ---
@@ -7,7 +7,6 @@ const translations = {
   es: {
     navServices: 'Servicios',
     navPortfolio: 'Portafolio',
-    navTestimonials: 'Testimonios',
     navBlog: 'Blog',
     navCalculator: 'Calculadora',
     navAbout: 'Nosotros',
@@ -32,14 +31,6 @@ const translations = {
     portfolioItem2Desc: 'Sitio web profesional para una firma de consultoría financiera internacional.',
     portfolioItem3Title: 'Landing Page para App Móvil',
     portfolioItem3Desc: 'Página de captura de leads para el lanzamiento de una nueva aplicación.',
-    testimonialsTitle: 'Lo que Dicen Nuestros Clientes',
-    testimonialsSubtitle: 'La satisfacción de nuestros clientes es nuestra mayor prioridad.',
-    testimonial1Text: '"El profesionalismo y la velocidad de entrega superaron mis expectativas. El sitio web ha sido clave para el crecimiento de mi negocio. ¡Totalmente recomendado!"',
-    testimonial1Name: 'Ana García',
-    testimonial1Company: 'CEO de TechCorp',
-    testimonial2Text: '"Desde el primer contacto hasta el lanzamiento, el proceso fue impecable. Entendieron perfectamente mi visión y la convirtieron en una realidad digital impresionante."',
-    testimonial2Name: 'Carlos Rodríguez',
-    testimonial2Company: 'Fundador de Innovate Solutions',
     blogTitle: 'Nuestro Blog',
     blogSubtitle: 'Artículos, tutoriales y consejos del mundo de la tecnología y el desarrollo web.',
     blogArticle1Title: '5 Razones por las que tu Negocio Necesita un Sitio Web Rápido',
@@ -112,7 +103,100 @@ const translations = {
     cookieBannerButton: 'Aceptar',
   },
   en: {
-    // ... (traducciones en inglés completas)
+    navServices: 'Services',
+    navPortfolio: 'Portfolio',
+    navBlog: 'Blog',
+    navCalculator: 'Calculator',
+    navAbout: 'About Us',
+    navContact: 'Contact',
+    heroTitle: 'We Transform Data into',
+    heroTitleHighlight: 'Intelligent Decisions',
+    heroSubtitle: 'We create custom web solutions, offer expert technical support, and remote virtual assistance to boost your business globally.',
+    heroButton: 'Request a Quote',
+    servicesTitle: 'Our Services',
+    servicesSubtitle: 'Comprehensive solutions for your digital presence.',
+    service1Title: 'Web Design and Development',
+    service1Desc: 'We build modern, fast, and secure websites and applications. From corporate pages to e-commerce, we focus on user experience and SEO.',
+    service2Title: 'Specialized Technical Support',
+    service2Desc: 'We offer preventive maintenance, troubleshooting, and system optimization. Your technological infrastructure will always be in the best hands.',
+    service3Title: 'Remote Virtual Assistance',
+    service3Desc: 'Delegate administrative tasks, schedule management, customer service, and more. We optimize your time so you can focus on growing your business.',
+    portfolioTitle: 'Featured Projects',
+    portfolioSubtitle: 'A glimpse of our quality work.',
+    portfolioItem1Title: 'Tech E-commerce',
+    portfolioItem1Desc: 'Online sales platform with payment gateway and inventory management.',
+    portfolioItem2Title: 'Corporate Website for a Consulting Firm',
+    portfolioItem2Desc: 'Professional website for an international financial consulting firm.',
+    portfolioItem3Title: 'Landing Page for Mobile App',
+    portfolioItem3Desc: 'Lead capture page for the launch of a new application.',
+    blogTitle: 'Our Blog',
+    blogSubtitle: 'Articles, tutorials, and tips from the world of technology and web development.',
+    blogArticle1Title: '5 Reasons Why Your Business Needs a Fast Website',
+    blogArticle1Excerpt: 'Discover how loading speed directly impacts your sales and brand perception...',
+    blogArticle2Title: 'Introduction to SEO for Small Businesses',
+    blogArticle2Excerpt: 'Learn the basics to help your customers find you on Google without being an expert...',
+    blogArticle3Title: 'AI on Your Website? Beyond Chatbots',
+    blogArticle3Excerpt: 'We explore how artificial intelligence can automate tasks, personalize experiences, and more...',
+    blogReadMore: 'Read More',
+    calculatorTitle: 'Calculate Your Project',
+    calculatorSubtitle: 'Get an instant estimate by selecting the features you need.',
+    calculatorStep1: '1. Choose Site Type',
+    calculatorTypeLanding: 'Landing Page',
+    calculatorTypeCorporate: 'Corporate Site',
+    calculatorTypeEcommerce: 'E-commerce Store',
+    calculatorStep2: '2. Number of Additional Pages',
+    calculatorStep3: '3. Extra Features',
+    calculatorFeatureBlog: 'Blog',
+    calculatorFeatureBooking: 'Booking System',
+    calculatorFeatureAnimations: 'Advanced Animations',
+    calculatorFeatureAI: 'AI Integration',
+    calculatorResultTitle: 'Estimated Investment Range',
+    calculatorResultDisclaimer: '*This is an estimate. Final price may vary.',
+    calculatorButton: 'Request Formal Quote',
+    aboutTitle: 'Your Strategic Partner in the Digital World',
+    aboutDesc1: 'At Datx Solutions, we are a team passionate about technology. With over 2 years of experience, our mission is to deliver digital solutions that exceed expectations.',
+    aboutDesc2: 'We work with clients from all over the world, understanding the particularities of each market to offer a global service with a local touch. Transparency and excellence are our pillars.',
+    contactTitle: "Let's Talk About Your Project",
+    contactSubtitle: 'Use our AI assistant to get started or send us a message directly.',
+    aiAssistantTitle: 'AI Project Assistant',
+    aiAssistantDesc: 'Describe your business or idea and get an initial plan.',
+    aiAssistantPlaceholder: 'e.g., An online store for vintage clothing...',
+    aiAssistantButton: 'Generate Project Plan',
+    aiAssistantGenerating: 'Generating...',
+    formTitle: 'Or send us a message',
+    formNamePlaceholder: 'Your Name',
+    formEmailPlaceholder: 'Your Email Address',
+    formMessagePlaceholder: 'Tell us about your idea...',
+    formAcceptPrivacy: 'I have read and accept the',
+    formPrivacyLink: 'Privacy Policy',
+    formButton: 'Send Message',
+    formSending: 'Sending...',
+    footerContactTitle: 'Direct Contact',
+    footerContactGlobal: 'Global Presence',
+    footerFollowTitle: 'Follow Us',
+    footerFiverrLink: 'Hire me on Fiverr',
+    footerRights: 'All rights reserved.',
+    footerPrivacy: 'Privacy Policy',
+    faqTitle: 'Virtual Assistant',
+    faqWelcome: 'Hello! I am the Datx Solutions assistant. How can I help you today?',
+    faqPlaceholder: 'Type your question here...',
+    faqTyping: 'The assistant is typing...',
+    privacyTitle: 'Privacy Policy',
+    privacyEffectiveDate: 'Effective date: August 5, 2025',
+    privacyIntro: 'At Datx Solutions, we respect your privacy and are committed to protecting your personal data. This privacy policy will inform you about how we look after your data when you visit our website and tell you about your privacy rights.',
+    privacyDataTitle: '1. Data We Collect',
+    privacyDataDesc: 'We collect the data you provide to us directly through our contact form, which includes: your name, your email address, and the message you send us.',
+    privacyUseTitle: '2. How We Use Your Data',
+    privacyUseDesc: 'We use the information you provide solely to respond to your inquiries and to communicate with you about the services you have requested. We will not share your personal data with third parties without your consent.',
+    privacySecurityTitle: '3. Data Security',
+    privacySecurityDesc: 'We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used, or accessed in an unauthorized way.',
+    privacyCookiesTitle: '4. Use of Cookies',
+    privacyCookiesDesc: 'Our website uses essential cookies to ensure its proper functioning and improve your browsing experience. Cookies are small text files stored on your device. By continuing to use our site, you agree to the use of these cookies.',
+    privacyRightsTitle: '5. Your Rights',
+    privacyRightsDesc: 'You have the right to request access to, correction of, or deletion of your personal data that we have collected. To exercise these rights, please contact us via our email address.',
+    privacyContactTitle: '6. Contact Us',
+    privacyContactDesc: 'If you have any questions about this privacy policy, you can contact us at contacto@datxsolutions.com.',
+    privacyClose: 'Close',
   },
   // Otras traducciones (de, fr, pt) se omiten por brevedad
 };
@@ -480,35 +564,6 @@ const Portfolio = memo(({ content }) => (
     </section>
 ));
 
-const Testimonials = memo(({ content }) => (
-    <section id="testimonials" className="py-20 bg-black">
-        <div className="container mx-auto px-6">
-            <AnimateOnScroll className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-bold text-white">{content.testimonialsTitle}</h2>
-                <p className="text-gray-400 mt-2">{content.testimonialsSubtitle}</p>
-            </AnimateOnScroll>
-            <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-10 max-w-4xl mx-auto">
-                <AnimateOnScroll delay={0}>
-                    <TestimonialCard
-                        text={content.testimonial1Text}
-                        name={content.testimonial1Name}
-                        company={content.testimonial1Company}
-                        imageUrl="https://placehold.co/100x100/6366f1/ffffff?text=AG"
-                    />
-                </AnimateOnScroll>
-                <AnimateOnScroll delay={150}>
-                    <TestimonialCard
-                        text={content.testimonial2Text}
-                        name={content.testimonial2Name}
-                        company={content.testimonial2Company}
-                        imageUrl="https://placehold.co/100x100/ec4899/ffffff?text=CR"
-                    />
-                </AnimateOnScroll>
-            </div>
-        </div>
-    </section>
-));
-
 const Blog = memo(({ content }) => (
     <section id="blog" className="py-20 bg-gray-900">
         <div className="container mx-auto px-6">
@@ -740,7 +795,6 @@ export default function App() {
   const navLinks = [
     { href: '#services', label: content.navServices },
     { href: '#portfolio', label: content.navPortfolio },
-    { href: '#testimonials', label: content.navTestimonials },
     { href: '#blog', label: content.navBlog },
     { href: '#calculator', label: content.navCalculator },
     { href: '#about', label: content.navAbout },
@@ -839,7 +893,6 @@ export default function App() {
         <Hero content={content} />
         <Services content={content} />
         <Portfolio content={content} />
-        <Testimonials content={content} />
         <Blog content={content} />
         <ProjectCalculator content={content} onQuoteRequest={handleQuoteRequest} />
         <About content={content} />
@@ -873,6 +926,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
