@@ -76,10 +76,23 @@ const translations = {
     footerFollowTitle: 'Síguenos',
     footerFiverrLink: 'Contrátame en Fiverr',
     footerRights: 'Todos los derechos reservados.',
+    footerPrivacy: 'Política de Privacidad',
     faqTitle: 'Asistente Virtual',
     faqWelcome: '¡Hola! Soy el asistente de Datx Solutions. ¿En qué puedo ayudarte hoy?',
     faqPlaceholder: 'Escribe tu pregunta aquí...',
-    faqTyping: 'El asistente está escribiendo...'
+    faqTyping: 'El asistente está escribiendo...',
+    privacyTitle: 'Política de Privacidad',
+    privacyEffectiveDate: 'Fecha de vigencia: 5 de agosto de 2025',
+    privacyIntro: 'En Datx Solutions, respetamos tu privacidad y nos comprometemos a proteger tus datos personales. Esta política de privacidad te informará sobre cómo cuidamos tus datos cuando visitas nuestro sitio web y te informará sobre tus derechos de privacidad.',
+    privacyDataTitle: '1. Datos que recopilamos',
+    privacyDataDesc: 'Recopilamos los datos que nos proporcionas directamente a través de nuestro formulario de contacto, que incluyen: tu nombre, tu dirección de correo electrónico y el mensaje que nos envías.',
+    privacyUseTitle: '2. Cómo usamos tus datos',
+    privacyUseDesc: 'Utilizamos la información que nos proporcionas únicamente para responder a tus consultas y para comunicarnos contigo acerca de los servicios que has solicitado. No compartiremos tus datos personales con terceros sin tu consentimiento.',
+    privacySecurityTitle: '3. Seguridad de los datos',
+    privacySecurityDesc: 'Hemos implementado medidas de seguridad apropiadas para evitar que tus datos personales se pierdan accidentalmente, se usen o se acceda a ellos de forma no autorizada.',
+    privacyContactTitle: '4. Contacto',
+    privacyContactDesc: 'Si tienes alguna pregunta sobre esta política de privacidad, puedes contactarnos en contacto@datxsolutions.com.',
+    privacyClose: 'Cerrar',
   },
   en: {
     navServices: 'Services',
@@ -153,10 +166,23 @@ const translations = {
     footerFollowTitle: 'Follow Us',
     footerFiverrLink: 'Hire me on Fiverr',
     footerRights: 'All rights reserved.',
+    footerPrivacy: 'Privacy Policy',
     faqTitle: 'Virtual Assistant',
     faqWelcome: 'Hello! I am the Datx Solutions assistant. How can I help you today?',
     faqPlaceholder: 'Type your question here...',
-    faqTyping: 'The assistant is typing...'
+    faqTyping: 'The assistant is typing...',
+    privacyTitle: 'Privacy Policy',
+    privacyEffectiveDate: 'Effective date: August 5, 2025',
+    privacyIntro: 'At Datx Solutions, we respect your privacy and are committed to protecting your personal data. This privacy policy will inform you about how we look after your data when you visit our website and tell you about your privacy rights.',
+    privacyDataTitle: '1. Data We Collect',
+    privacyDataDesc: 'We collect the data you provide to us directly through our contact form, which includes: your name, your email address, and the message you send us.',
+    privacyUseTitle: '2. How We Use Your Data',
+    privacyUseDesc: 'We use the information you provide solely to respond to your inquiries and to communicate with you about the services you have requested. We will not share your personal data with third parties without your consent.',
+    privacySecurityTitle: '3. Data Security',
+    privacySecurityDesc: 'We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used, or accessed in an unauthorized way.',
+    privacyContactTitle: '4. Contact Us',
+    privacyContactDesc: 'If you have any questions about this privacy policy, you can contact us at contacto@datxsolutions.com.',
+    privacyClose: 'Close',
   },
   // Otras traducciones (de, fr, pt) se omiten por brevedad
 };
@@ -405,6 +431,32 @@ const ArticleCard = memo(({ imageUrl, title, excerpt, readMoreText }) => (
     </div>
 ));
 
+const PrivacyModal = memo(({ content, onClose }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 p-4">
+        <div className="bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+            <div className="p-6 border-b border-gray-700 flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-white">{content.privacyTitle}</h2>
+                <button onClick={onClose} className="text-gray-400 hover:text-white"><X size={24} /></button>
+            </div>
+            <div className="p-6 overflow-y-auto text-gray-300 space-y-4">
+                <p className="text-sm text-gray-500">{content.privacyEffectiveDate}</p>
+                <p>{content.privacyIntro}</p>
+                <h3 className="text-xl font-semibold text-white pt-2">{content.privacyDataTitle}</h3>
+                <p>{content.privacyDataDesc}</p>
+                <h3 className="text-xl font-semibold text-white pt-2">{content.privacyUseTitle}</h3>
+                <p>{content.privacyUseDesc}</p>
+                <h3 className="text-xl font-semibold text-white pt-2">{content.privacySecurityTitle}</h3>
+                <p>{content.privacySecurityDesc}</p>
+                <h3 className="text-xl font-semibold text-white pt-2">{content.privacyContactTitle}</h3>
+                <p>{content.privacyContactDesc}</p>
+            </div>
+            <div className="p-4 bg-gray-900 rounded-b-2xl text-right">
+                <button onClick={onClose} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full transition-colors">{content.privacyClose}</button>
+            </div>
+        </div>
+    </div>
+));
+
 const Header = memo(({ logoUrl, navLinks, onLanguageChange, language }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     return (
@@ -635,7 +687,7 @@ const Contact = memo(({ content, handleGeneratePlan, isLoading, error, generated
     </section>
 ));
 
-const Footer = memo(({ logoUrl, content }) => (
+const Footer = memo(({ logoUrl, content, onPrivacyClick }) => (
     <footer className="bg-black">
         <div className="container mx-auto px-6 py-10">
             <div className="grid md:grid-cols-3 gap-8 text-center md:text-left items-center">
@@ -655,7 +707,10 @@ const Footer = memo(({ logoUrl, content }) => (
                     </ul>
                 </div>
             </div>
-            <div className="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500"><p>&copy; {new Date().getFullYear()} Datx Solutions. {content.footerRights}</p></div>
+            <div className="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-4">
+                <p>&copy; {new Date().getFullYear()} Datx Solutions. {content.footerRights}</p>
+                <button onClick={onPrivacyClick} className="hover:text-blue-400 transition-colors">{content.footerPrivacy}</button>
+            </div>
         </div>
     </footer>
 ));
@@ -670,6 +725,8 @@ export default function App() {
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
   const [formStatus, setFormStatus] = useState('');
   const [language, setLanguage] = useState('es');
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+
   const content = translations[language] || translations.es;
   const logoUrl = "/assets/Logo_datx_negativo.png";
   const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -792,14 +849,17 @@ export default function App() {
         />
       </main>
 
-      <Footer logoUrl={logoUrl} content={content} />
+      <Footer logoUrl={logoUrl} content={content} onPrivacyClick={() => setIsPrivacyModalOpen(true)} />
       
       <Suspense fallback={null}>
         <FaqChat content={content} apiKey={geminiApiKey} />
       </Suspense>
+
+      {isPrivacyModalOpen && <PrivacyModal content={content} onClose={() => setIsPrivacyModalOpen(false)} />}
     </div>
   );
 }
+
 
 
 
