@@ -92,7 +92,11 @@ const translations = {
     privacyUseDesc: 'Utilizamos la información que nos proporcionas únicamente para responder a tus consultas y para comunicarnos contigo acerca de los servicios que has solicitado. No compartiremos tus datos personales con terceros sin tu consentimiento.',
     privacySecurityTitle: '3. Seguridad de los datos',
     privacySecurityDesc: 'Hemos implementado medidas de seguridad apropiadas para evitar que tus datos personales se pierdan accidentalmente, se usen o se acceda a ellos de forma no autorizada.',
-    privacyContactTitle: '4. Contacto',
+    privacyCookiesTitle: '4. Uso de Cookies',
+    privacyCookiesDesc: 'Nuestro sitio web utiliza cookies esenciales para garantizar su correcto funcionamiento y mejorar tu experiencia de navegación. Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo. Al continuar utilizando nuestro sitio, aceptas el uso de estas cookies.',
+    privacyRightsTitle: '5. Tus Derechos',
+    privacyRightsDesc: 'Tienes derecho a solicitar acceso, rectificación o eliminación de tus datos personales que hemos recopilado. Para ejercer estos derechos, por favor contáctanos a través de nuestro correo electrónico.',
+    privacyContactTitle: '6. Contacto',
     privacyContactDesc: 'Si tienes alguna pregunta sobre esta política de privacidad, puedes contactarnos en contacto@datxsolutions.com.',
     privacyClose: 'Cerrar',
   },
@@ -184,7 +188,11 @@ const translations = {
     privacyUseDesc: 'We use the information you provide solely to respond to your inquiries and to communicate with you about the services you have requested. We will not share your personal data with third parties without your consent.',
     privacySecurityTitle: '3. Data Security',
     privacySecurityDesc: 'We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used, or accessed in an unauthorized way.',
-    privacyContactTitle: '4. Contact Us',
+    privacyCookiesTitle: '4. Use of Cookies',
+    privacyCookiesDesc: 'Our website uses essential cookies to ensure its proper functioning and improve your browsing experience. Cookies are small text files stored on your device. By continuing to use our site, you agree to the use of these cookies.',
+    privacyRightsTitle: '5. Your Rights',
+    privacyRightsDesc: 'You have the right to request access to, correction of, or deletion of your personal data that we have collected. To exercise these rights, please contact us via our email address.',
+    privacyContactTitle: '6. Contact Us',
     privacyContactDesc: 'If you have any questions about this privacy policy, you can contact us at contacto@datxsolutions.com.',
     privacyClose: 'Close',
   },
@@ -451,6 +459,10 @@ const PrivacyModal = memo(({ content, onClose }) => (
                 <p>{content.privacyUseDesc}</p>
                 <h3 className="text-xl font-semibold text-white pt-2">{content.privacySecurityTitle}</h3>
                 <p>{content.privacySecurityDesc}</p>
+                <h3 className="text-xl font-semibold text-white pt-2">{content.privacyCookiesTitle}</h3>
+                <p>{content.privacyCookiesDesc}</p>
+                <h3 className="text-xl font-semibold text-white pt-2">{content.privacyRightsTitle}</h3>
+                <p>{content.privacyRightsDesc}</p>
                 <h3 className="text-xl font-semibold text-white pt-2">{content.privacyContactTitle}</h3>
                 <p>{content.privacyContactDesc}</p>
             </div>
@@ -881,7 +893,6 @@ export default function App() {
     </div>
   );
 }
-
 
 
 
