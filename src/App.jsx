@@ -179,7 +179,7 @@ const HeroAnimation = () => {
 
 const AnimateOnScroll = memo(({ children, className = '', delay = 0 }) => {
     const ref = useRef(null);
-    const [isVisible, setIsVisible] useState(false);
+    const [isVisible, setIsVisible] = useState(false);
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => {
             if (entry.isIntersecting) {
@@ -407,30 +407,319 @@ const CookieConsentBanner = memo(({ content, onAccept, onPrivacyClick }) => (
     </div>
 ));
 
-const TestimonialCard = memo(({ text, name, company, imageUrl }) => (
-    <div className="bg-gray-800 p-8 rounded-2xl shadow-lg h-full flex flex-col">
-        <div className="flex-grow mb-6">
-            <div className="flex items-center mb-4">
-                {[...Array(5)].map((_, i) => <Star key={i} className="text-yellow-400 fill-current" size={20} />)}
+const Header = memo(({ logoUrl, navLinks, onLanguageChange, language }) => {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    return (
+        <header className="bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50">
+            <div className="container mx-auto px-6 py-3 flex justify-between items-center">
+                <a href="#" className="flex items-center"><img src={logoUrl} alt="Datx Solutions Logo" className="h-14" /></a>
+                <div className="hidden md:flex items-center gap-8">
+                    <nav className="flex space-x-8">
+                        {navLinks.map((link) => (<a key={link.href} href={link.href} className="text-gray-300 hover:text-blue-400 transition-colors duration-300">{link.label}</a>))}
+                    </nav>
+                    <LanguageSwitcher onLanguageChange={onLanguageChange} currentLang={language} />
+                </div>
+                <div className="md:hidden flex items-center gap-4">
+                    <LanguageSwitcher onLanguageChange={onLanguageChange} currentLang={language} />
+                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white focus:outline-none">{isMenuOpen ? <X size={28} /> : <Menu size={28} />}</button>
+                </div>
             </div>
-            <p className="text-gray-300 italic">"{text}"</p>
+            {isMenuOpen && (
+                <div className="md:hidden bg-gray-800">
+                    <nav className="flex flex-col items-center space-y-4 py-4">
+                        {navLinks.map((link) => (<a key={link.href} href={link.href} onClick={() => setIsMenuOpen(false)} className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-lg">{link.label}</a>))}
+                    </nav>
+                </div>
+            )}
+        </header>
+    );
+});
+
+const Hero = memo(({ content }) => (
+    <section id="home" className="relative py-32 md:py-48 bg-gray-900 text-center overflow-hidden">
+        <Suspense fallback={<div className="absolute inset-0 bg-gray-900" />}>
+            <HeroAnimation />
+        </Suspense>
+        <div className="relative z-10 container mx-auto px-6">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4">{content.heroTitle} <span className="animated-gradient-text">{content.heroTitleHighlight}</span></h1>
+            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-8">{content.heroSubtitle}</p>
+            <a href="#contact" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105">{content.heroButton}</a>
         </div>
-        <div className="flex items-center mt-auto">
-            <img src={imageUrl} alt={name} className="w-12 h-12 rounded-full object-cover mr-4" onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/100x100/1e293b/ffffff?text=User'; }} />
-            <div>
-                <p className="font-bold text-white">{name}</p>
-                <p className="text-sm text-gray-400">{company}</p>
-            </div>
-        </div>
-    </div>
+    </section>
 ));
+
+const Services = memo(({ content }) => (
+    <section id="services" className="py-20 bg-black">
+        <div className="container mx-auto px-6">
+            <AnimateOnScroll className="text-center mb-16">
+                <h2 className="text-3xl md:text-4xl font-bold text-white">{content.servicesTitle}</h2>
+                <p className="text-gray-400 mt-2">{content.servicesSubtitle}</p>
+            </AnimateOnScroll>
+            <div className="grid md:grid-cols-3 gap-10">
+                <AnimateOnScroll delay={0}><ServiceCard icon={<Code size={48} />} title={content.service1Title}>{content.service1Desc}</ServiceCard></AnimateOnScroll>
+                <AnimateOnScroll delay={150}><ServiceCard icon={<ShieldCheck size={48} />} title={content.service2Title}>{content.service2Desc}</ServiceCard></AnimateOnScroll>
+                <AnimateOnScroll delay={300}><ServiceCard icon={<Bot size={48} />} title={content.service3Title}>{content.service3Desc}</ServiceCard></AnimateOnScroll>
+            </div>
+        </div>
+    </section>
+));
+
+const Portfolio = memo(({ content }) => (
+     <section id="portfolio" className="py-20 bg-gray-900">
+        <div className="container mx-auto px-6">
+            <AnimateOnScroll className="text-center mb-16">
+                <h2 className="text-3xl md:text-4xl font-bold text-white">{content.portfolioTitle}</h2>
+                <p className="text-gray-400 mt-2">{content.portfolioSubtitle}</p>
+            </AnimateOnScroll>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+               <AnimateOnScroll delay={0}><PortfolioItem imageUrl="https://placehold.co/600x400/1e293b/38bdf8?text=E-commerce+Tech" title={content.portfolioItem1Title} description={content.portfolioItem1Desc} url="#" /></AnimateOnScroll>
+               <AnimateOnScroll delay={150}><PortfolioItem imageUrl="https://placehold.co/600x400/1e293b/38bdf8?text=Web+Corporativa" title={content.portfolioItem2Title} description={content.portfolioItem2Desc} url="#" /></AnimateOnScroll>
+               <AnimateOnScroll delay={300}><PortfolioItem imageUrl="https://placehold.co/600x400/1e293b/38bdf8?text=Landing+Page+App" title={content.portfolioItem3Title} description={content.portfolioItem3Desc} url="#" /></AnimateOnScroll>
+            </div>
+        </div>
+    </section>
+));
+
+const Testimonials = memo(({ content }) => (
+    <section id="testimonials" className="py-20 bg-black">
+        <div className="container mx-auto px-6">
+            <AnimateOnScroll className="text-center mb-16">
+                <h2 className="text-3xl md:text-4xl font-bold text-white">{content.testimonialsTitle}</h2>
+                <p className="text-gray-400 mt-2">{content.testimonialsSubtitle}</p>
+            </AnimateOnScroll>
+            <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-10 max-w-4xl mx-auto">
+                <AnimateOnScroll delay={0}>
+                    <TestimonialCard
+                        text={content.testimonial1Text}
+                        name={content.testimonial1Name}
+                        company={content.testimonial1Company}
+                        imageUrl="https://placehold.co/100x100/6366f1/ffffff?text=AG"
+                    />
+                </AnimateOnScroll>
+                <AnimateOnScroll delay={150}>
+                    <TestimonialCard
+                        text={content.testimonial2Text}
+                        name={content.testimonial2Name}
+                        company={content.testimonial2Company}
+                        imageUrl="https://placehold.co/100x100/ec4899/ffffff?text=CR"
+                    />
+                </AnimateOnScroll>
+            </div>
+        </div>
+    </section>
+));
+
+const Blog = memo(({ content }) => (
+    <section id="blog" className="py-20 bg-gray-900">
+        <div className="container mx-auto px-6">
+            <AnimateOnScroll className="text-center mb-16">
+                <h2 className="text-3xl md:text-4xl font-bold text-white">{content.blogTitle}</h2>
+                <p className="text-gray-400 mt-2">{content.blogSubtitle}</p>
+            </AnimateOnScroll>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <AnimateOnScroll delay={0}>
+                    <ArticleCard 
+                        imageUrl="https://placehold.co/600x400/1e293b/ffffff?text=Velocidad"
+                        title={content.blogArticle1Title}
+                        excerpt={content.blogArticle1Excerpt}
+                        readMoreText={content.blogReadMore}
+                    />
+                </AnimateOnScroll>
+                <AnimateOnScroll delay={150}>
+                    <ArticleCard 
+                        imageUrl="https://placehold.co/600x400/1e293b/ffffff?text=SEO"
+                        title={content.blogArticle2Title}
+                        excerpt={content.blogArticle2Excerpt}
+                        readMoreText={content.blogReadMore}
+                    />
+                </AnimateOnScroll>
+                <AnimateOnScroll delay={300}>
+                    <ArticleCard 
+                        imageUrl="https://placehold.co/600x400/1e293b/ffffff?text=IA"
+                        title={content.blogArticle3Title}
+                        excerpt={content.blogArticle3Excerpt}
+                        readMoreText={content.blogReadMore}
+                    />
+                </AnimateOnScroll>
+            </div>
+        </div>
+    </section>
+));
+
+const ProjectCalculator = memo(({ content, onQuoteRequest }) => {
+    const [siteType, setSiteType] = useState('corporate');
+    const [pages, setPages] = useState(4);
+    const [features, setFeatures] = useState({ blog: false, booking: false, animations: false, ai: false });
+    const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
+    const PRICING_LOGIC = { base: { landing: 250, corporate: 500, ecommerce: 800 }, perPage: 50, features: { blog: 150, booking: 200, animations: 150, ai: 250 }, rangeMultiplier: 1.4 };
+    useEffect(() => {
+        let basePrice = PRICING_LOGIC.base[siteType];
+        let pagesPrice = siteType === 'landing' ? 0 : (pages * PRICING_LOGIC.perPage);
+        let featuresPrice = 0;
+        for (const feature in features) {
+            if (features[feature]) {
+                featuresPrice += PRICING_LOGIC.features[feature];
+            }
+        }
+        const minPrice = basePrice + pagesPrice + featuresPrice;
+        const maxPrice = Math.ceil((minPrice * PRICING_LOGIC.rangeMultiplier) / 50) * 50;
+        setPriceRange({ min: minPrice, max: maxPrice });
+    }, [siteType, pages, features, PRICING_LOGIC]);
+    const handleTypeChange = (type) => {
+        setSiteType(type);
+        if (type === 'landing') setPages(0);
+        if (type === 'corporate') setPages(4);
+        if (type === 'ecommerce') setPages(5);
+    };
+    const handleFeatureChange = (feature) => { setFeatures(prev => ({ ...prev, [feature]: !prev[feature] })); };
+    const handleQuoteButtonClick = () => {
+        const selectionSummary = `Resumen de la cotización estimada:\n- Tipo de sitio: ${siteType}\n- Páginas adicionales: ${pages}\n- Funcionalidades:\n  - Blog: ${features.blog ? 'Sí' : 'No'}\n  - Sistema de Reservas: ${features.booking ? 'Sí' : 'No'}\n  - Animaciones Avanzadas: ${features.animations ? 'Sí' : 'No'}\n  - Integración con IA: ${features.ai ? 'Sí' : 'No'}\n- Rango de precio estimado: $${priceRange.min} - $${priceRange.max} USD.\n\nMe gustaría recibir una cotización formal basada en esta selección.`;
+        onQuoteRequest(selectionSummary.trim());
+    };
+    const siteTypes = [{ id: 'landing', label: content.calculatorTypeLanding, icon: <FileText /> }, { id: 'corporate', label: content.calculatorTypeCorporate, icon: <Building /> }, { id: 'ecommerce', label: content.calculatorTypeEcommerce, icon: <ShoppingCart /> }];
+    const extraFeatures = [{ id: 'blog', label: content.calculatorFeatureBlog, icon: <PenTool /> }, { id: 'booking', label: content.calculatorFeatureBooking, icon: <FilePlus /> }, { id: 'animations', label: content.calculatorFeatureAnimations, icon: <Sparkles /> }, { id: 'ai', label: content.calculatorFeatureAI, icon: <BotMessageSquare /> }];
+    return (
+        <section id="calculator" className="py-20 bg-black">
+            <div className="container mx-auto px-6">
+                <AnimateOnScroll className="text-center mb-16">
+                    <h2 className="text-3xl md:text-4xl font-bold text-white">{content.calculatorTitle}</h2>
+                    <p className="text-gray-400 mt-2">{content.calculatorSubtitle}</p>
+                </AnimateOnScroll>
+                <div className="max-w-4xl mx-auto grid lg:grid-cols-2 gap-10 bg-gray-900 p-8 rounded-2xl">
+                    <div className="space-y-8">
+                        <div>
+                            <h3 className="text-xl font-semibold text-white mb-4">{content.calculatorStep1}</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">{siteTypes.map(type => (<button key={type.id} onClick={() => handleTypeChange(type.id)} className={`p-4 rounded-lg border-2 transition-all duration-200 flex flex-col items-center gap-2 ${siteType === type.id ? 'bg-blue-500 border-blue-400' : 'bg-gray-800 border-gray-700 hover:border-blue-500'}`}>{type.icon}<span>{type.label}</span></button>))}</div>
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-semibold text-white mb-4">{content.calculatorStep2}</h3>
+                            <div className="flex items-center gap-4"><input type="range" min="0" max="15" value={pages} onChange={(e) => setPages(Number(e.target.value))} disabled={siteType === 'landing'} className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer disabled:opacity-50" /><span className="bg-gray-800 text-white text-lg font-semibold px-4 py-1 rounded-md w-16 text-center">{siteType === 'landing' ? 1 : pages + 1}</span></div>
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-semibold text-white mb-4">{content.calculatorStep3}</h3>
+                            <div className="grid grid-cols-2 gap-4">{extraFeatures.map(feature => (<label key={feature.id} className="flex items-center gap-3 bg-gray-800 p-3 rounded-lg cursor-pointer border-2 border-gray-700 hover:border-blue-500 transition-colors"><input type="checkbox" checked={features[feature.id]} onChange={() => handleFeatureChange(feature.id)} className="h-5 w-5 rounded bg-gray-900 border-gray-600 text-blue-500 focus:ring-blue-500" />{feature.icon}<span>{feature.label}</span></label>))}</div>
+                        </div>
+                    </div>
+                    <div className="bg-gray-800 p-8 rounded-2xl flex flex-col justify-center items-center text-center">
+                        <h3 className="text-xl font-semibold text-white mb-2">{content.calculatorResultTitle}</h3>
+                        <p className="text-4xl md:text-5xl font-bold text-blue-400 my-4">${priceRange.min} - ${priceRange.max} <span className="text-2xl text-gray-400">USD</span></p>
+                        <p className="text-gray-500 text-sm mb-6">{content.calculatorResultDisclaimer}</p>
+                        <button onClick={handleQuoteButtonClick} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 w-full">{content.calculatorButton}</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+});
+
+const About = memo(({ content }) => (
+    <section id="about" className="py-20 bg-black">
+        <div className="container mx-auto px-6">
+            <div className="flex flex-col md:flex-row items-center gap-12">
+                <AnimateOnScroll className="md:w-1/2"><img src="https://placehold.co/800x600/020617/ffffff?text=Equipo" alt="Nuestro equipo" className="rounded-2xl shadow-lg" /></AnimateOnScroll>
+                <AnimateOnScroll className="md:w-1/2" delay={150}>
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">{content.aboutTitle}</h2>
+                    <p className="text-gray-400 mb-4 leading-relaxed">{content.aboutDesc1}</p>
+                    <p className="text-gray-400 leading-relaxed">{content.aboutDesc2}</p>
+                </AnimateOnScroll>
+            </div>
+        </div>
+    </section>
+));
+
+const Contact = memo(({ content, handleGeneratePlan, isLoading, error, generatedPlan, projectIdea, setProjectIdea, formState, handleFormChange, handleFormSubmit, formStatus, privacyAccepted, setPrivacyAccepted, onPrivacyClick }) => (
+    <section id="contact" className="py-20 bg-gray-900">
+        <div className="container mx-auto px-6">
+            <AnimateOnScroll className="text-center mb-16">
+                <h2 className="text-3xl md:text-4xl font-bold text-white">{content.contactTitle}</h2>
+                <p className="text-gray-400 mt-2">{content.contactSubtitle}</p>
+            </AnimateOnScroll>
+            <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-16 items-start">
+                <AnimateOnScroll className="bg-gray-800/50 p-8 rounded-2xl border border-blue-500/30">
+                    <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3"><Sparkles className="text-blue-400" />{content.aiAssistantTitle}</h3>
+                    <p className="text-gray-400 mb-6">{content.aiAssistantDesc}</p>
+                    <div className="space-y-4">
+                        <textarea id="project-idea" rows="3" placeholder={content.aiAssistantPlaceholder} className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={projectIdea} onChange={(e) => setProjectIdea(e.target.value)} />
+                        <button onClick={handleGeneratePlan} disabled={isLoading} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105 disabled:bg-blue-800 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            {isLoading ? <><LoaderCircle className="animate-spin" />{content.aiAssistantGenerating}</> : <>✨ {content.aiAssistantButton}</>}
+                        </button>
+                        {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+                    </div>
+                    {generatedPlan && (
+                        <div className="mt-8 pt-6 border-t border-gray-700 animate-fade-in"><h4 className="text-xl font-bold text-white mb-4">{generatedPlan.projectTitle}</h4><p className="text-gray-400 mb-4">{generatedPlan.projectDescription}</p><h5 className="font-semibold text-white mb-2">Características Clave:</h5><ul className="list-disc list-inside text-gray-400 space-y-1 mb-4">{generatedPlan.keyFeatures.map((feature, i) => <li key={i}>{feature}</li>)}</ul><h5 className="font-semibold text-white mb-2">Stack Tecnológico Sugerido:</h5><div className="text-sm text-gray-500"><p><strong>Frontend:</strong> {generatedPlan.suggestedStack.frontend}</p><p><strong>Backend:</strong> {generatedPlan.suggestedStack.backend}</p><p><strong>Base de Datos:</strong> {generatedPlan.suggestedStack.database}</p></div></div>
+                    )}
+                </AnimateOnScroll>
+                <AnimateOnScroll delay={150}>
+                    <h3 className="text-2xl font-bold text-white mb-4">{content.formTitle}</h3>
+                    <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={handleFormSubmit} className="space-y-6">
+                        <input type="hidden" name="form-name" value="contact" />
+                        <p className="hidden"><label>No llenes esto si eres humano: <input name="bot-field" onChange={handleFormChange} /></label></p>
+                        <div><input type="text" name="name" placeholder={content.formNamePlaceholder} value={formState.name} onChange={handleFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required /></div>
+                        <div><input type="email" name="email" placeholder={content.formEmailPlaceholder} value={formState.email} onChange={handleFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required /></div>
+                        <div><textarea name="message" rows="5" placeholder={content.formMessagePlaceholder} value={formState.message} onChange={handleFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea></div>
+                        <div className="flex items-center gap-3">
+                            <input type="checkbox" id="privacy" name="privacy" checked={privacyAccepted} onChange={() => setPrivacyAccepted(!privacyAccepted)} className="h-4 w-4 rounded bg-gray-900 border-gray-600 text-blue-500 focus:ring-blue-500" required />
+                            <label htmlFor="privacy" className="text-sm text-gray-400">
+                                {content.formAcceptPrivacy}{' '}
+                                <button type="button" onClick={onPrivacyClick} className="underline hover:text-blue-400 transition-colors">
+                                    {content.formPrivacyLink}
+                                </button>
+                            </label>
+                        </div>
+                        <div className="text-center">
+                            <button type="submit" disabled={!privacyAccepted} className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-10 rounded-full text-lg transition-all transform hover:scale-105 disabled:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                {formStatus === 'Enviando...' ? content.formSending : content.formButton}
+                            </button>
+                        </div>
+                        {formStatus && formStatus !== 'Enviando...' && (<p className="text-center text-white mt-4">{formStatus}</p>)}
+                    </form>
+                </AnimateOnScroll>
+            </div>
+        </div>
+    </section>
+));
+
+const Footer = memo(({ logoUrl, content, onPrivacyClick }) => (
+    <footer className="bg-black">
+        <div className="container mx-auto px-6 py-10">
+            <div className="grid md:grid-cols-3 gap-8 text-center md:text-left items-center">
+                <div className="flex justify-center md:justify-start"><img src={logoUrl} alt="Datx Solutions Logo" className="h-20" /></div>
+                <div>
+                    <h3 className="text-xl font-bold text-white mb-4">{content.footerContactTitle}</h3>
+                    <ul className="space-y-2">
+                        <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400"><Mail size={18} /> <a href="mailto:contacto@datxsolutions.com">contacto@datxsolutions.com</a></li>
+                        <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400"><Phone size={18} /> <a href="https://wa.me/573103032487" target="_blank" rel="noopener noreferrer">+57 310 303 2487 (WhatsApp)</a></li>
+                        <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400"><Globe size={18} /><span>{content.footerContactGlobal}</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 className="text-xl font-bold text-white mb-4">{content.footerFollowTitle}</h3>
+                    <ul className="space-y-2">
+                        <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400 transition-colors"><Briefcase size={18} /><a href="https://es.fiverr.com/s/xXL3DpB" target="_blank" rel="noopener noreferrer">{content.footerFiverrLink}</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div className="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-4">
+                <p>&copy; {new Date().getFullYear()} Datx Solutions. {content.footerRights}</p>
+                <button onClick={onPrivacyClick} className="hover:text-blue-400 transition-colors">{content.footerPrivacy}</button>
+            </div>
+        </div>
+    </footer>
+));
+
 
 // --- COMPONENTE PRINCIPAL DE LA APLICACIÓN ---
 export default function App() {
+  const [projectIdea, setProjectIdea] = useState('');
+  const [generatedPlan, setGeneratedPlan] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [formState, setFormState] = useState({ name: '', email: '', message: '' });
+  const [formStatus, setFormStatus] = useState('');
   const [language, setLanguage] = useState('es');
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [showCookieBanner, setShowCookieBanner] = useState(false);
-  const [formState, setFormState] = useState({ name: '', email: '', message: '' });
 
   useEffect(() => {
       const consent = localStorage.getItem('cookie_consent');
@@ -466,6 +755,66 @@ export default function App() {
       }
   };
 
+  const handleGeneratePlan = async () => {
+    if (!projectIdea.trim()) {
+      setError("Por favor, describe tu idea de proyecto.");
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    setGeneratedPlan(null);
+    const apiKey = geminiApiKey;
+    if (!apiKey) {
+        setError("La configuración de la API Key no está disponible.");
+        setIsLoading(false);
+        return;
+    }
+    const prompt = `Como consultor experto en desarrollo web, analiza la siguiente idea de negocio y genera un plan de proyecto conciso y profesional en formato JSON. La idea es: "${projectIdea}". Responde únicamente con el objeto JSON. La descripción y las características deben estar en español. El JSON debe tener la siguiente estructura: { "projectTitle": "Un título atractivo para el proyecto", "projectDescription": "Una descripción de 2-3 frases sobre el proyecto, destacando su valor.", "keyFeatures": ["Característica clave 1", "Característica clave 2", "Característica clave 3", "Característica clave 4"], "suggestedStack": { "frontend": "Tecnología Frontend", "backend": "Tecnología Backend", "database": "Base de datos" } }`;
+    try {
+        const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } };
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+        const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (!response.ok) {
+            const errorBody = await response.text();
+            throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorBody}`);
+        }
+        const result = await response.json();
+        if (result.candidates?.[0]?.content?.parts?.[0]) {
+            const text = result.candidates[0].content.parts[0].text;
+            const parsedJson = JSON.parse(text);
+            setGeneratedPlan(parsedJson);
+        } else {
+            throw new Error("La respuesta de la API no tiene el formato esperado.");
+        }
+    } catch (err) {
+        console.error("Detalles del error de la IA:", err);
+        setError("Error al contactar la IA. Revisa la consola para más detalles.");
+    } finally {
+        setIsLoading(false);
+    }
+  };
+  const handleFormChange = (e) => { setFormState({ ...formState, [e.target.name]: e.target.value }); };
+  const encode = (data) => { return Object.keys(data).map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key])).join("&"); };
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setFormStatus('Enviando...');
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: encode({ "form-name": "contact", ...formState })
+    })
+      .then(() => {
+        setFormStatus("¡Mensaje enviado con éxito!");
+        setFormState({ name: '', email: '', message: '' });
+        setPrivacyAccepted(false); // Resetea el checkbox
+        setTimeout(() => setFormStatus(''), 5000);
+      })
+      .catch(error => {
+        setFormStatus("Hubo un error al enviar el mensaje.");
+        console.error(error);
+      });
+  };
+
   return (
     <div className="bg-gray-900 text-gray-200 font-sans leading-normal tracking-tight">
       <style>{`
@@ -496,9 +845,18 @@ export default function App() {
         <About content={content} />
         <Contact 
             content={content} 
-            geminiApiKey={geminiApiKey}
+            handleGeneratePlan={handleGeneratePlan}
+            isLoading={isLoading}
+            error={error}
+            generatedPlan={generatedPlan}
+            projectIdea={projectIdea}
+            setProjectIdea={setProjectIdea}
             formState={formState}
-            setFormState={setFormState}
+            handleFormChange={handleFormChange}
+            handleFormSubmit={handleFormSubmit}
+            formStatus={formStatus}
+            privacyAccepted={privacyAccepted}
+            setPrivacyAccepted={setPrivacyAccepted}
             onPrivacyClick={() => setIsPrivacyModalOpen(true)}
         />
       </main>
@@ -515,163 +873,6 @@ export default function App() {
     </div>
   );
 }
-
-// --- COMPONENTES DE SECCIÓN (CON LÓGICA PROPIA) ---
-
-const Contact = memo(({ content, geminiApiKey, formState, setFormState, onPrivacyClick }) => {
-    const [projectIdea, setProjectIdea] = useState('');
-    const [generatedPlan, setGeneratedPlan] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [formStatus, setFormStatus] = useState('');
-    const [privacyAccepted, setPrivacyAccepted] = useState(false);
-
-    const handleFormChange = (e) => {
-        setFormState({ ...formState, [e.target.name]: e.target.value });
-    };
-
-    const handleGeneratePlan = async () => {
-        if (!projectIdea.trim()) {
-          setError("Por favor, describe tu idea de proyecto.");
-          return;
-        }
-        setIsLoading(true);
-        setError(null);
-        setGeneratedPlan(null);
-        const apiKey = geminiApiKey;
-        if (!apiKey) {
-            setError("La configuración de la API Key no está disponible.");
-            setIsLoading(false);
-            return;
-        }
-        const prompt = `Como consultor experto en desarrollo web, analiza la siguiente idea de negocio y genera un plan de proyecto conciso y profesional en formato JSON. La idea es: "${projectIdea}". Responde únicamente con el objeto JSON. La descripción y las características deben estar en español. El JSON debe tener la siguiente estructura: { "projectTitle": "Un título atractivo para el proyecto", "projectDescription": "Una descripción de 2-3 frases sobre el proyecto, destacando su valor.", "keyFeatures": ["Característica clave 1", "Característica clave 2", "Característica clave 3", "Característica clave 4"], "suggestedStack": { "frontend": "Tecnología Frontend", "backend": "Tecnología Backend", "database": "Base de datos" } }`;
-        try {
-            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } };
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (!response.ok) {
-                const errorBody = await response.text();
-                throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${errorBody}`);
-            }
-            const result = await response.json();
-            if (result.candidates?.[0]?.content?.parts?.[0]) {
-                const text = result.candidates[0].content.parts[0].text;
-                const parsedJson = JSON.parse(text);
-                setGeneratedPlan(parsedJson);
-            } else {
-                throw new Error("La respuesta de la API no tiene el formato esperado.");
-            }
-        } catch (err) {
-            console.error("Detalles del error de la IA:", err);
-            setError("Error al contactar la IA. Revisa la consola para más detalles.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const encode = (data) => { return Object.keys(data).map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key])).join("&"); };
-
-    const handleFormSubmit = (e) => {
-        e.preventDefault();
-        setFormStatus('Enviando...');
-        fetch("/", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: encode({ "form-name": "contact", ...formState })
-        })
-          .then(() => {
-            setFormStatus("¡Mensaje enviado con éxito!");
-            setFormState({ name: '', email: '', message: '' });
-            setPrivacyAccepted(false); // Resetea el checkbox
-            setTimeout(() => setFormStatus(''), 5000);
-          })
-          .catch(error => {
-            setFormStatus("Hubo un error al enviar el mensaje.");
-            console.error(error);
-          });
-    };
-
-    return (
-        <section id="contact" className="py-20 bg-gray-900">
-            <div className="container mx-auto px-6">
-                <AnimateOnScroll className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white">{content.contactTitle}</h2>
-                    <p className="text-gray-400 mt-2">{content.contactSubtitle}</p>
-                </AnimateOnScroll>
-                <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-16 items-start">
-                    <AnimateOnScroll className="bg-gray-800/50 p-8 rounded-2xl border border-blue-500/30">
-                        <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3"><Sparkles className="text-blue-400" />{content.aiAssistantTitle}</h3>
-                        <p className="text-gray-400 mb-6">{content.aiAssistantDesc}</p>
-                        <div className="space-y-4">
-                            <textarea id="project-idea" rows="3" placeholder={content.aiAssistantPlaceholder} className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={projectIdea} onChange={(e) => setProjectIdea(e.target.value)} />
-                            <button onClick={handleGeneratePlan} disabled={isLoading} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105 disabled:bg-blue-800 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                                {isLoading ? <><LoaderCircle className="animate-spin" />{content.aiAssistantGenerating}</> : <>✨ {content.aiAssistantButton}</>}
-                            </button>
-                            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
-                        </div>
-                        {generatedPlan && (
-                            <div className="mt-8 pt-6 border-t border-gray-700 animate-fade-in"><h4 className="text-xl font-bold text-white mb-4">{generatedPlan.projectTitle}</h4><p className="text-gray-400 mb-4">{generatedPlan.projectDescription}</p><h5 className="font-semibold text-white mb-2">Características Clave:</h5><ul className="list-disc list-inside text-gray-400 space-y-1 mb-4">{generatedPlan.keyFeatures.map((feature, i) => <li key={i}>{feature}</li>)}</ul><h5 className="font-semibold text-white mb-2">Stack Tecnológico Sugerido:</h5><div className="text-sm text-gray-500"><p><strong>Frontend:</strong> {generatedPlan.suggestedStack.frontend}</p><p><strong>Backend:</strong> {generatedPlan.suggestedStack.backend}</p><p><strong>Base de Datos:</strong> {generatedPlan.suggestedStack.database}</p></div></div>
-                        )}
-                    </AnimateOnScroll>
-                    <AnimateOnScroll delay={150}>
-                        <h3 className="text-2xl font-bold text-white mb-4">{content.formTitle}</h3>
-                        <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={handleFormSubmit} className="space-y-6">
-                            <input type="hidden" name="form-name" value="contact" />
-                            <p className="hidden"><label>No llenes esto si eres humano: <input name="bot-field" onChange={handleFormChange} /></label></p>
-                            <div><input type="text" name="name" placeholder={content.formNamePlaceholder} value={formState.name} onChange={handleFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required /></div>
-                            <div><input type="email" name="email" placeholder={content.formEmailPlaceholder} value={formState.email} onChange={handleFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required /></div>
-                            <div><textarea name="message" rows="5" placeholder={content.formMessagePlaceholder} value={formState.message} onChange={handleFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea></div>
-                            <div className="flex items-center gap-3">
-                                <input type="checkbox" id="privacy" name="privacy" checked={privacyAccepted} onChange={() => setPrivacyAccepted(!privacyAccepted)} className="h-4 w-4 rounded bg-gray-900 border-gray-600 text-blue-500 focus:ring-blue-500" required />
-                                <label htmlFor="privacy" className="text-sm text-gray-400">
-                                    {content.formAcceptPrivacy}{' '}
-                                    <button type="button" onClick={onPrivacyClick} className="underline hover:text-blue-400 transition-colors">
-                                        {content.formPrivacyLink}
-                                    </button>
-                                </label>
-                            </div>
-                            <div className="text-center">
-                                <button type="submit" disabled={!privacyAccepted} className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-10 rounded-full text-lg transition-all transform hover:scale-105 disabled:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
-                                    {formStatus === 'Enviando...' ? content.formSending : content.formButton}
-                                </button>
-                            </div>
-                            {formStatus && formStatus !== 'Enviando...' && (<p className="text-center text-white mt-4">{formStatus}</p>)}
-                        </form>
-                    </AnimateOnScroll>
-                </div>
-            </div>
-        </section>
-    );
-});
-
-const Footer = memo(({ logoUrl, content, onPrivacyClick }) => (
-    <footer className="bg-black">
-        <div className="container mx-auto px-6 py-10">
-            <div className="grid md:grid-cols-3 gap-8 text-center md:text-left items-center">
-                <div className="flex justify-center md:justify-start"><img src={logoUrl} alt="Datx Solutions Logo" className="h-20" /></div>
-                <div>
-                    <h3 className="text-xl font-bold text-white mb-4">{content.footerContactTitle}</h3>
-                    <ul className="space-y-2">
-                        <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400"><Mail size={18} /> <a href="mailto:contacto@datxsolutions.com">contacto@datxsolutions.com</a></li>
-                        <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400"><Phone size={18} /> <a href="https://wa.me/573103032487" target="_blank" rel="noopener noreferrer">+57 310 303 2487 (WhatsApp)</a></li>
-                        <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400"><Globe size={18} /><span>{content.footerContactGlobal}</span></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 className="text-xl font-bold text-white mb-4">{content.footerFollowTitle}</h3>
-                    <ul className="space-y-2">
-                        <li className="flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-blue-400 transition-colors"><Briefcase size={18} /><a href="https://es.fiverr.com/s/xXL3DpB" target="_blank" rel="noopener noreferrer">{content.footerFiverrLink}</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div className="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-4">
-                <p>&copy; {new Date().getFullYear()} Datx Solutions. {content.footerRights}</p>
-                <button onClick={onPrivacyClick} className="hover:text-blue-400 transition-colors">{content.footerPrivacy}</button>
-            </div>
-        </div>
-    </footer>
-));
-
 
 
 
