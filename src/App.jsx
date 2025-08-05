@@ -99,6 +99,8 @@ const translations = {
     privacyContactTitle: '6. Contacto',
     privacyContactDesc: 'Si tienes alguna pregunta sobre esta política de privacidad, puedes contactarnos en contacto@datxsolutions.com.',
     privacyClose: 'Cerrar',
+    cookieBannerText: 'Usamos cookies para asegurar que te damos la mejor experiencia en nuestra web. Consulta nuestra',
+    cookieBannerButton: 'Aceptar',
   },
   en: {
     navServices: 'Services',
@@ -473,6 +475,22 @@ const PrivacyModal = memo(({ content, onClose }) => (
     </div>
 ));
 
+const CookieConsentBanner = memo(({ content, onAccept, onPrivacyClick }) => (
+    <div className="fixed bottom-0 left-0 right-0 bg-gray-900/80 backdrop-blur-sm p-4 z-50">
+        <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-gray-300 text-center sm:text-left">
+                {content.cookieBannerText}{' '}
+                <button onClick={onPrivacyClick} className="underline hover:text-blue-400 transition-colors">
+                    {content.footerPrivacy}
+                </button>.
+            </p>
+            <button onClick={onAccept} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full transition-colors flex-shrink-0">
+                {content.cookieBannerButton}
+            </button>
+        </div>
+    </div>
+));
+
 const Header = memo(({ logoUrl, navLinks, onLanguageChange, language }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     return (
@@ -756,6 +774,19 @@ export default function App() {
   const [language, setLanguage] = useState('es');
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [showCookieBanner, setShowCookieBanner] = useState(false);
+
+  useEffect(() => {
+      const consent = localStorage.getItem('cookie_consent');
+      if (!consent) {
+          setShowCookieBanner(true);
+      }
+  }, []);
+
+  const handleAcceptCookies = () => {
+      localStorage.setItem('cookie_consent', 'true');
+      setShowCookieBanner(false);
+  };
 
   const content = translations[language] || translations.es;
   const logoUrl = "/assets/Logo_datx_negativo.png";
@@ -890,10 +921,11 @@ export default function App() {
       </Suspense>
 
       {isPrivacyModalOpen && <PrivacyModal content={content} onClose={() => setIsPrivacyModalOpen(false)} />}
+      
+      {showCookieBanner && <CookieConsentBanner content={content} onAccept={handleAcceptCookies} onPrivacyClick={() => setIsPrivacyModalOpen(true)} />}
     </div>
   );
 }
-
 
 
 
