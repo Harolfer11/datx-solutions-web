@@ -7,7 +7,7 @@ const translations = {
   es: {
     navServices: 'Servicios',
     navPortfolio: 'Portafolio',
-    navTestimonials: 'Testimonios', // Nuevo
+    navTestimonials: 'Testimonios',
     navBlog: 'Blog',
     navCalculator: 'Calculadora',
     navAbout: 'Nosotros',
@@ -32,17 +32,17 @@ const translations = {
     portfolioItem2Desc: 'Sitio web profesional para una firma de consultoría financiera internacional.',
     portfolioItem3Title: 'Landing Page para App Móvil',
     portfolioItem3Desc: 'Página de captura de leads para el lanzamiento de una nueva aplicación.',
-    testimonialsTitle: 'Lo que dicen nuestros clientes', // Nuevo
-    testimonialsSubtitle: 'La satisfacción y el éxito de nuestros socios son nuestra mayor prioridad.', // Nuevo
-    testimonial1Name: 'Ana García', // Nuevo
-    testimonial1Company: 'CEO de TechSolutions', // Nuevo
-    testimonial1Quote: '"El equipo de Datx superó todas nuestras expectativas. El sitio web que desarrollaron no solo es visualmente impresionante, sino también increíblemente rápido y funcional. ¡Nuestro tráfico orgánico ha aumentado un 50%!"', // Nuevo
-    testimonial2Name: 'Carlos Rodríguez', // Nuevo
-    testimonial2Company: 'Gerente de Marketing en Innovate Co.', // Nuevo
-    testimonial2Quote: '"El soporte técnico es de primer nivel. Siempre están disponibles para resolver cualquier problema, por complejo que sea. Nos han ahorrado incontables horas de inactividad. Totalmente recomendados."', // Nuevo
-    testimonial3Name: 'Laura Fernández', // Nuevo
-    testimonial3Company: 'Emprendedora', // Nuevo
-    testimonial3Quote: '"La asistencia virtual ha transformado mi productividad. Delegar las tareas administrativas me ha permitido centrarme en hacer crecer mi negocio. Son organizados, eficientes y muy proactivos."', // Nuevo
+    testimonialsTitle: 'Lo que dicen nuestros clientes',
+    testimonialsSubtitle: 'La satisfacción y el éxito de nuestros socios son nuestra mayor prioridad.',
+    testimonial1Name: 'Ana García',
+    testimonial1Company: 'Directora de Startup Tecnológica', // Modificado
+    testimonial1Quote: '"El equipo de Datx superó todas nuestras expectativas. El sitio web que desarrollaron no solo es visualmente impresionante, sino también increíblemente rápido y funcional. ¡Nuestro tráfico orgánico ha aumentado un 50%!"',
+    testimonial2Name: 'Carlos Rodríguez',
+    testimonial2Company: 'Gerente de Marketing Digital', // Modificado
+    testimonial2Quote: '"El soporte técnico es de primer nivel. Siempre están disponibles para resolver cualquier problema, por complejo que sea. Nos han ahorrado incontables horas de inactividad. Totalmente recomendados."',
+    testimonial3Name: 'Laura Fernández',
+    testimonial3Company: 'Propietaria de E-commerce', // Modificado
+    testimonial3Quote: '"La asistencia virtual ha transformado mi productividad. Delegar las tareas administrativas me ha permitido centrarme en hacer crecer mi negocio. Son organizados, eficientes y muy proactivos."',
     blogTitle: 'Nuestro Blog',
     blogSubtitle: 'Artículos, tutoriales y consejos del mundo de la tecnología y el desarrollo web.',
     blogArticle1Title: '5 Razones por las que tu Negocio Necesita un Sitio Web Rápido',
@@ -117,7 +117,7 @@ const translations = {
   en: {
     navServices: 'Services',
     navPortfolio: 'Portfolio',
-    navTestimonials: 'Testimonials', // New
+    navTestimonials: 'Testimonials',
     navBlog: 'Blog',
     navCalculator: 'Calculator',
     navAbout: 'About Us',
@@ -142,17 +142,17 @@ const translations = {
     portfolioItem2Desc: 'Professional website for an international financial consulting firm.',
     portfolioItem3Title: 'Landing Page for Mobile App',
     portfolioItem3Desc: 'Lead capture page for the launch of a new application.',
-    testimonialsTitle: 'What Our Clients Say', // New
-    testimonialsSubtitle: 'The satisfaction and success of our partners are our top priority.', // New
-    testimonial1Name: 'Ana Garcia', // New
-    testimonial1Company: 'CEO of TechSolutions', // New
-    testimonial1Quote: '"The Datx team exceeded all our expectations. The website they developed is not only visually stunning but also incredibly fast and functional. Our organic traffic has increased by 50%!"', // New
-    testimonial2Name: 'Carlos Rodriguez', // New
-    testimonial2Company: 'Marketing Manager at Innovate Co.', // New
-    testimonial2Quote: '"The technical support is top-notch. They are always available to solve any issue, no matter how complex. They have saved us countless hours of downtime. Highly recommended."', // New
-    testimonial3Name: 'Laura Fernandez', // New
-    testimonial3Company: 'Entrepreneur', // New
-    testimonial3Quote: '"The virtual assistance has transformed my productivity. Delegating administrative tasks has allowed me to focus on growing my business. They are organized, efficient, and very proactive."', // New
+    testimonialsTitle: 'What Our Clients Say',
+    testimonialsSubtitle: 'The satisfaction and success of our partners are our top priority.',
+    testimonial1Name: 'Ana Garcia',
+    testimonial1Company: 'Tech Startup Director', // Modified
+    testimonial1Quote: '"The Datx team exceeded all our expectations. The website they developed is not only visually stunning but also incredibly fast and functional. Our organic traffic has increased by 50%!"',
+    testimonial2Name: 'Carlos Rodriguez',
+    testimonial2Company: 'Digital Marketing Manager', // Modified
+    testimonial2Quote: '"The technical support is top-notch. They are always available to solve any issue, no matter how complex. They have saved us countless hours of downtime. Highly recommended."',
+    testimonial3Name: 'Laura Fernandez',
+    testimonial3Company: 'E-commerce Owner', // Modified
+    testimonial3Quote: '"The virtual assistance has transformed my productivity. Delegating administrative tasks has allowed me to focus on growing my business. They are organized, efficient, and very proactive."',
     blogTitle: 'Our Blog',
     blogSubtitle: 'Articles, tutorials, and tips from the world of technology and web development.',
     blogArticle1Title: '5 Reasons Why Your Business Needs a Fast Website',
