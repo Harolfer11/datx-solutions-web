@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, Suspense, memo } from 'react';
-import { ShieldCheck, Code, Bot, Menu, X, Globe, Phone, Mail, Sparkles, LoaderCircle, Briefcase, ChevronDown, MessageSquare, SendHorizontal } from 'lucide-react';
+import { ShieldCheck, Code, Bot, Menu, X, Globe, Phone, Mail, Sparkles, LoaderCircle, Briefcase, ChevronDown, MessageSquare, SendHorizontal, Building, FileText, ShoppingCart, FilePlus, PenTool, BotMessageSquare } from 'lucide-react';
 import * as THREE from 'three';
 
 // --- Central de Traducciones ---
@@ -7,6 +7,7 @@ const translations = {
   es: {
     navServices: 'Servicios',
     navPortfolio: 'Portafolio',
+    navCalculator: 'Calculadora',
     navAbout: 'Nosotros',
     navContact: 'Contacto',
     heroTitle: 'Transformamos Datos en',
@@ -29,6 +30,21 @@ const translations = {
     portfolioItem2Desc: 'Sitio web profesional para una firma de consultoría financiera internacional.',
     portfolioItem3Title: 'Landing Page para App Móvil',
     portfolioItem3Desc: 'Página de captura de leads para el lanzamiento de una nueva aplicación.',
+    calculatorTitle: 'Calcula tu Proyecto',
+    calculatorSubtitle: 'Obtén una estimación instantánea seleccionando las características que necesitas.',
+    calculatorStep1: '1. Elige el Tipo de Sitio',
+    calculatorTypeLanding: 'Landing Page',
+    calculatorTypeCorporate: 'Sitio Corporativo',
+    calculatorTypeEcommerce: 'Tienda Online (E-commerce)',
+    calculatorStep2: '2. Número de Páginas Adicionales',
+    calculatorStep3: '3. Funcionalidades Extra',
+    calculatorFeatureBlog: 'Blog',
+    calculatorFeatureBooking: 'Sistema de Reservas',
+    calculatorFeatureAnimations: 'Animaciones Avanzadas',
+    calculatorFeatureAI: 'Integración con IA',
+    calculatorResultTitle: 'Rango de Inversión Estimado',
+    calculatorResultDisclaimer: '*Este es un estimado. El precio final puede variar.',
+    calculatorButton: 'Solicitar Cotización Formal',
     aboutTitle: 'Tu Socio Estratégico en el Mundo Digital',
     aboutDesc1: 'En Datx Solutions, somos un equipo de apasionados por la tecnología. Con más de 2 años de experiencia, nuestra misión es ofrecer soluciones digitales que superen las expectativas.',
     aboutDesc2: 'Trabajamos con clientes de todo el mundo, entendiendo cada mercado para ofrecer un servicio global con un toque local. La transparencia y la excelencia son nuestros pilares.',
@@ -58,6 +74,7 @@ const translations = {
   en: {
     navServices: 'Services',
     navPortfolio: 'Portfolio',
+    navCalculator: 'Calculator',
     navAbout: 'About Us',
     navContact: 'Contact',
     heroTitle: 'We Transform Data into',
@@ -80,6 +97,21 @@ const translations = {
     portfolioItem2Desc: 'Professional website for an international financial consulting firm.',
     portfolioItem3Title: 'Landing Page for Mobile App',
     portfolioItem3Desc: 'Lead capture page for the launch of a new application.',
+    calculatorTitle: 'Calculate Your Project',
+    calculatorSubtitle: 'Get an instant estimate by selecting the features you need.',
+    calculatorStep1: '1. Choose Site Type',
+    calculatorTypeLanding: 'Landing Page',
+    calculatorTypeCorporate: 'Corporate Site',
+    calculatorTypeEcommerce: 'E-commerce Store',
+    calculatorStep2: '2. Number of Additional Pages',
+    calculatorStep3: '3. Extra Features',
+    calculatorFeatureBlog: 'Blog',
+    calculatorFeatureBooking: 'Booking System',
+    calculatorFeatureAnimations: 'Advanced Animations',
+    calculatorFeatureAI: 'AI Integration',
+    calculatorResultTitle: 'Estimated Investment Range',
+    calculatorResultDisclaimer: '*This is an estimate. Final price may vary.',
+    calculatorButton: 'Request Formal Quote',
     aboutTitle: 'Your Strategic Partner in the Digital World',
     aboutDesc1: 'At Datx Solutions, we are a team passionate about technology. With over 2 years of experience, our mission is to deliver digital solutions that exceed expectations.',
     aboutDesc2: 'We work with clients from all over the world, understanding the particularities of each market to offer a global service with a local touch. Transparency and excellence are our pillars.',
@@ -106,7 +138,7 @@ const translations = {
     faqPlaceholder: 'Type your question here...',
     faqTyping: 'The assistant is typing...'
   },
-  // Otras traducciones (de, fr, pt) se omiten por brevedad en este ejemplo, pero estarían aquí
+  // Otras traducciones (de, fr, pt) se omiten por brevedad
 };
 
 // --- COMPONENTES MODULARES ---
@@ -338,9 +370,6 @@ const FaqChat = ({ content, apiKey }) => {
     );
 };
 
-
-// --- COMPONENTES DE SECCIÓN ---
-
 const Header = memo(({ logoUrl, navLinks, onLanguageChange, language }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     return (
@@ -371,7 +400,7 @@ const Header = memo(({ logoUrl, navLinks, onLanguageChange, language }) => {
 
 const Hero = memo(({ content }) => (
     <section id="home" className="relative py-32 md:py-48 bg-gray-900 text-center overflow-hidden">
-        <Suspense fallback={<div>Cargando animación...</div>}>
+        <Suspense fallback={<div className="absolute inset-0 bg-gray-900" />}>
             <HeroAnimation />
         </Suspense>
         <div className="relative z-10 container mx-auto px-6">
@@ -413,6 +442,72 @@ const Portfolio = memo(({ content }) => (
         </div>
     </section>
 ));
+
+const ProjectCalculator = memo(({ content, onQuoteRequest }) => {
+    const [siteType, setSiteType] = useState('corporate');
+    const [pages, setPages] = useState(4);
+    const [features, setFeatures] = useState({ blog: false, booking: false, animations: false, ai: false });
+    const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
+    const PRICING_LOGIC = { base: { landing: 250, corporate: 500, ecommerce: 800 }, perPage: 50, features: { blog: 150, booking: 200, animations: 150, ai: 250 }, rangeMultiplier: 1.4 };
+    useEffect(() => {
+        let basePrice = PRICING_LOGIC.base[siteType];
+        let pagesPrice = siteType === 'landing' ? 0 : (pages * PRICING_LOGIC.perPage);
+        let featuresPrice = 0;
+        for (const feature in features) {
+            if (features[feature]) {
+                featuresPrice += PRICING_LOGIC.features[feature];
+            }
+        }
+        const minPrice = basePrice + pagesPrice + featuresPrice;
+        const maxPrice = Math.ceil((minPrice * PRICING_LOGIC.rangeMultiplier) / 50) * 50;
+        setPriceRange({ min: minPrice, max: maxPrice });
+    }, [siteType, pages, features, PRICING_LOGIC]);
+    const handleTypeChange = (type) => {
+        setSiteType(type);
+        if (type === 'landing') setPages(0);
+        if (type === 'corporate') setPages(4);
+        if (type === 'ecommerce') setPages(5);
+    };
+    const handleFeatureChange = (feature) => { setFeatures(prev => ({ ...prev, [feature]: !prev[feature] })); };
+    const handleQuoteButtonClick = () => {
+        const selectionSummary = `Resumen de la cotización estimada:\n- Tipo de sitio: ${siteType}\n- Páginas adicionales: ${pages}\n- Funcionalidades:\n  - Blog: ${features.blog ? 'Sí' : 'No'}\n  - Sistema de Reservas: ${features.booking ? 'Sí' : 'No'}\n  - Animaciones Avanzadas: ${features.animations ? 'Sí' : 'No'}\n  - Integración con IA: ${features.ai ? 'Sí' : 'No'}\n- Rango de precio estimado: $${priceRange.min} - $${priceRange.max} USD.\n\nMe gustaría recibir una cotización formal basada en esta selección.`;
+        onQuoteRequest(selectionSummary.trim());
+    };
+    const siteTypes = [{ id: 'landing', label: content.calculatorTypeLanding, icon: <FileText /> }, { id: 'corporate', label: content.calculatorTypeCorporate, icon: <Building /> }, { id: 'ecommerce', label: content.calculatorTypeEcommerce, icon: <ShoppingCart /> }];
+    const extraFeatures = [{ id: 'blog', label: content.calculatorFeatureBlog, icon: <PenTool /> }, { id: 'booking', label: content.calculatorFeatureBooking, icon: <FilePlus /> }, { id: 'animations', label: content.calculatorFeatureAnimations, icon: <Sparkles /> }, { id: 'ai', label: content.calculatorFeatureAI, icon: <BotMessageSquare /> }];
+    return (
+        <section id="calculator" className="py-20 bg-black">
+            <div className="container mx-auto px-6">
+                <AnimateOnScroll className="text-center mb-16">
+                    <h2 className="text-3xl md:text-4xl font-bold text-white">{content.calculatorTitle}</h2>
+                    <p className="text-gray-400 mt-2">{content.calculatorSubtitle}</p>
+                </AnimateOnScroll>
+                <div className="max-w-4xl mx-auto grid lg:grid-cols-2 gap-10 bg-gray-900 p-8 rounded-2xl">
+                    <div className="space-y-8">
+                        <div>
+                            <h3 className="text-xl font-semibold text-white mb-4">{content.calculatorStep1}</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">{siteTypes.map(type => (<button key={type.id} onClick={() => handleTypeChange(type.id)} className={`p-4 rounded-lg border-2 transition-all duration-200 flex flex-col items-center gap-2 ${siteType === type.id ? 'bg-blue-500 border-blue-400' : 'bg-gray-800 border-gray-700 hover:border-blue-500'}`}>{type.icon}<span>{type.label}</span></button>))}</div>
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-semibold text-white mb-4">{content.calculatorStep2}</h3>
+                            <div className="flex items-center gap-4"><input type="range" min="0" max="15" value={pages} onChange={(e) => setPages(Number(e.target.value))} disabled={siteType === 'landing'} className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer disabled:opacity-50" /><span className="bg-gray-800 text-white text-lg font-semibold px-4 py-1 rounded-md w-16 text-center">{siteType === 'landing' ? 1 : pages + 1}</span></div>
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-semibold text-white mb-4">{content.calculatorStep3}</h3>
+                            <div className="grid grid-cols-2 gap-4">{extraFeatures.map(feature => (<label key={feature.id} className="flex items-center gap-3 bg-gray-800 p-3 rounded-lg cursor-pointer border-2 border-gray-700 hover:border-blue-500 transition-colors"><input type="checkbox" checked={features[feature.id]} onChange={() => handleFeatureChange(feature.id)} className="h-5 w-5 rounded bg-gray-900 border-gray-600 text-blue-500 focus:ring-blue-500" />{feature.icon}<span>{feature.label}</span></label>))}</div>
+                        </div>
+                    </div>
+                    <div className="bg-gray-800 p-8 rounded-2xl flex flex-col justify-center items-center text-center">
+                        <h3 className="text-xl font-semibold text-white mb-2">{content.calculatorResultTitle}</h3>
+                        <p className="text-4xl md:text-5xl font-bold text-blue-400 my-4">${priceRange.min} - ${priceRange.max} <span className="text-2xl text-gray-400">USD</span></p>
+                        <p className="text-gray-500 text-sm mb-6">{content.calculatorResultDisclaimer}</p>
+                        <button onClick={handleQuoteButtonClick} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 w-full">{content.calculatorButton}</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+});
 
 const About = memo(({ content }) => (
     <section id="about" className="py-20 bg-black">
@@ -510,9 +605,18 @@ export default function App() {
   const navLinks = [
     { href: '#services', label: content.navServices },
     { href: '#portfolio', label: content.navPortfolio },
+    { href: '#calculator', label: content.navCalculator },
     { href: '#about', label: content.navAbout },
     { href: '#contact', label: content.navContact },
   ];
+
+  const handleQuoteRequest = (summary) => {
+      setFormState(prev => ({ ...prev, message: summary }));
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+          contactSection.scrollIntoView({ behavior: 'smooth' });
+      }
+  };
 
   const handleGeneratePlan = async () => {
     if (!projectIdea.trim()) {
@@ -597,6 +701,7 @@ export default function App() {
         <Hero content={content} />
         <Services content={content} />
         <Portfolio content={content} />
+        <ProjectCalculator content={content} onQuoteRequest={handleQuoteRequest} />
         <About content={content} />
         <Contact 
             content={content} 
@@ -621,6 +726,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
